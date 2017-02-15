@@ -12,8 +12,10 @@ import qualified BMemory as BM
 import Types
 
 ----------------------------------------
+
 width = 80
 height = 25
+
 ----------------------------------------
 
 _DEBUG = True
@@ -41,8 +43,9 @@ main = do
 
   let pc = PC ((0, 0), East)
   let stack = BS.empty
+  --let ip = BInstructionPointer.starting
 
-  runProgram mem stack pc
+  runProgram mem stack ip
 
 
 readProgram :: String -> IO String
@@ -58,9 +61,12 @@ readProgram fname = do
       exitFailure) :: SomeException -> IO String)
 
 
+
 runProgram :: BM.BMemory -> BS.BStack -> BProgramCursor -> IO ()
 runProgram mem stack pc@(PC ((x, y), dir)) = do
+  --let (x, y) = BInstructionPointer.getPosition ip
   char <- BM.get mem (x, y)
+
 
   when _DEBUG $ do
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")"
@@ -70,9 +76,8 @@ runProgram mem stack pc@(PC ((x, y), dir)) = do
       putStrLn "Program finished"
       return ()
     else do
-      (stack', pc') <- executeInstruction mem stack pc char
-      runProgram mem stack' pc'
-
+      (stack', ip') <- executeInstruction mem stack ip char
+      runProgram mem stack' ip'
 
 
 executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCursor -> Char -> IO (BS.BStack, BProgramCursor)
@@ -81,11 +86,13 @@ executeInstruction mem stack pc char = do
     '+' -> return $ (instr_add stack, step pc)
     _ -> return $ (stack, step pc)
   where
-    step :: BProgramCursor -> BProgramCursor
+    --step :: BProgramCursor -> BProgramCursor
     step (PC ((x, y), North)) = PC ((x, mod (y - 1) height), North)
     step (PC ((x, y), East)) = PC ((mod (x + 1) width, y), East)
     step (PC ((x, y), South)) = PC ((x, mod (y + 1) height), South)
     step (PC ((x, y), West)) = PC ((mod (x - 1) width, y), West)
+    
+    --step = BInstructionPointer.step
 
 
 instr_add :: BS.BStack -> BS.BStack
