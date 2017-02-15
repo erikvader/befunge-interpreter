@@ -5,14 +5,16 @@ import System.Exit
 import Control.Monad
 import Control.Exception
 import Data.Array.IO
+import System.Random
 
-import BStack
-import BMemory
-import BInstructionPointer
+import qualified BStack as BS
+import qualified BMemory as BM
+import Types
 
 ----------------------------------------
 
-type Position = (Int, Int)
+width = 80
+height = 25
 
 ----------------------------------------
 
@@ -36,11 +38,12 @@ main = do
   program <- readProgram filename
   let progLines = lines program
 
-  mem <- newArray ((0, 0), (79, 24)) ' ' :: IO (BMemory)
-  buildMemory mem progLines
+  mem <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO (BM.BMemory)
+  BM.buildMemory mem progLines
 
-  let ip = BInstructionPointer.starting
-  let stack = BStack.empty
+  let pc = PC ((0, 0), East)
+  let stack = BS.empty
+  --let ip = BInstructionPointer.starting
 
   runProgram mem stack ip
 
@@ -58,32 +61,42 @@ readProgram fname = do
       exitFailure) :: SomeException -> IO String)
 
 
-runProgram :: BMemory -> BStack -> BInstructionPointer -> IO ()
-runProgram mem stack ip = do
-  let (x, y) = BInstructionPointer.getPosition ip
-  char <- BMemory.getValue mem (x, y)
+
+runProgram :: BM.BMemory -> BS.BStack -> BProgramCursor -> IO ()
+runProgram mem stack pc@(PC ((x, y), dir)) = do
+  --let (x, y) = BInstructionPointer.getPosition ip
+  char <- BM.get mem (x, y)
+
 
   when _DEBUG $ do
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")"
-  
+
   if char == '@'
-    then return ()
+    then do
+      putStrLn "Program finished"
+      return ()
     else do
       (stack', ip') <- executeInstruction mem stack ip char
       runProgram mem stack' ip'
 
 
-executeInstruction :: BMemory -> BStack -> BInstructionPointer -> Char -> IO (BStack, BInstructionPointer)
-executeInstruction mem stack ip char = do
+executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCursor -> Char -> IO (BS.BStack, BProgramCursor)
+executeInstruction mem stack pc char = do
   case char of
-    '+' -> return $ (instr_add stack, step ip)
-    _ -> return $ (stack, step ip)
+    '+' -> return $ (instr_add stack, step pc)
+    _ -> return $ (stack, step pc)
   where
-    step = BInstructionPointer.step
+    --step :: BProgramCursor -> BProgramCursor
+    step (PC ((x, y), North)) = PC ((x, mod (y - 1) height), North)
+    step (PC ((x, y), East)) = PC ((mod (x + 1) width, y), East)
+    step (PC ((x, y), South)) = PC ((x, mod (y + 1) height), South)
+    step (PC ((x, y), West)) = PC ((mod (x - 1) width, y), West)
+    
+    --step = BInstructionPointer.step
 
 
-instr_add :: BStack -> BStack
+instr_add :: BS.BStack -> BS.BStack
 instr_add stack =
-  let (stack', b) = BStack.pop stack
-      (stack'', a) = BStack.pop stack'
-  in BStack.push stack'' (a + b)
+  let (stack', b) = BS.pop stack
+      (stack'', a) = BS.pop stack'
+  in BS.push stack'' (a + b)
