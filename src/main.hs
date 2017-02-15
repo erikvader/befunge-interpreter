@@ -9,6 +9,7 @@ import Data.Array.IO
 import BStack
 import BMemory
 import BInstructionPointer
+import BInstructions
 
 ----------------------------------------
 
@@ -76,14 +77,7 @@ runProgram mem stack ip = do
 executeInstruction :: BMemory -> BStack -> BInstructionPointer -> Char -> IO (BStack, BInstructionPointer)
 executeInstruction mem stack ip char = do
   case char of
-    '+' -> return $ (instr_add stack, step ip)
+    '+' -> return $ (BInstructions.add stack, ip)
     _ -> return $ (stack, step ip)
   where
     step = BInstructionPointer.step
-
-
-instr_add :: BStack -> BStack
-instr_add stack =
-  let (stack', b) = BStack.pop stack
-      (stack'', a) = BStack.pop stack'
-  in BStack.push stack'' (a + b)
