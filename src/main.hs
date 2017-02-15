@@ -45,7 +45,7 @@ main = do
   let stack = BS.empty
   --let ip = BInstructionPointer.starting
 
-  runProgram mem stack ip
+  runProgram mem stack pc
 
 
 readProgram :: String -> IO String
@@ -63,9 +63,9 @@ readProgram fname = do
 
 
 runProgram :: BM.BMemory -> BS.BStack -> BProgramCursor -> IO ()
-runProgram mem stack pc@(PC ((x, y), dir)) = do
+runProgram mem stack ip@(PC ((x, y), dir)) = do
   --let (x, y) = BInstructionPointer.getPosition ip
-  char <- BM.get mem (x, y)
+  char <- BM.getValue mem (x, y)
 
 
   when _DEBUG $ do
@@ -91,7 +91,7 @@ executeInstruction mem stack pc char = do
     step (PC ((x, y), East)) = PC ((mod (x + 1) width, y), East)
     step (PC ((x, y), South)) = PC ((x, mod (y + 1) height), South)
     step (PC ((x, y), West)) = PC ((mod (x - 1) width, y), West)
-    
+
     --step = BInstructionPointer.step
 
 

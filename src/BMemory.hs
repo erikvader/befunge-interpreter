@@ -32,7 +32,7 @@ buildMemory arr progLines = do
       buildArrayAux2 :: IOArray Position Char -> Position -> String -> IO ()
       buildArrayAux2 _ _ "" = return ()
       buildArrayAux2 arr (x, y) (c:cs) = do
-        put arr (x, y) c
+        putValue arr (x, y) c
         buildArrayAux2 arr (x + 1, y) cs
 
 
