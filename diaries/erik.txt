@@ -1,0 +1,8 @@
+# 15/2 - 2017
+Today I did a couple of things to fix the overall structure to hopefully make it better.
+I noticed that we were declaring the same datatypes on multiple files. I tried
+to fix this by making another file called 'Types.hs' that would hold all datatypes
+in one place. Now of course, every file now needs to import this one if they need
+access some datatype.
+I also changed all imports in 'main.hs' to be qualified to reduce confusion, and 
+name collisions.
