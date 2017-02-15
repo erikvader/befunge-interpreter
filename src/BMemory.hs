@@ -1,4 +1,4 @@
-module BMemory (BMemory, buildMemory, get, put) where
+module BMemory (BMemory, buildMemory, getValue, putValue) where
 
 import Data.Array
 import Data.Array.IO
@@ -11,8 +11,8 @@ type BMemory = IOArray Position Char
 --------------------------------------------------------------------------------
 
 buildMemory :: IOArray Position Char -> [String] -> IO ()
-get :: IOArray Position Char -> Position -> IO Char
-put :: IOArray Position Char -> Position -> Char -> IO ()
+getValue :: IOArray Position Char -> Position -> IO Char
+putValue :: IOArray Position Char -> Position -> Char -> IO ()
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -31,17 +31,17 @@ buildMemory arr progLines = do
       buildArrayAux2 :: IOArray Position Char -> Position -> String -> IO ()
       buildArrayAux2 arr _ "" = return ()
       buildArrayAux2 arr (x, y) (c:cs) = do 
-        put arr (x, y) c
+        putValue arr (x, y) c
         buildArrayAux2 arr (x + 1, y) cs
 
 
-get arr (x, y) = do
+getValue arr (x, y) = do
   (minpos, maxpos) <- getBounds arr
   if (x, y) < minpos || (x, y) > maxpos
     then return ' '
     else readArray arr (x, y)
 
-put arr (x, y) val = do
+putValue arr (x, y) val = do
   (minpos, maxpos) <- getBounds arr
   if (x, y) < minpos || (x, y) > maxpos
     then return ()
