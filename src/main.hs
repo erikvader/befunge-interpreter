@@ -77,7 +77,7 @@ runProgram mem stack pc@(PC ((x, y), dir)) = do
 executeInstruction :: BMemory -> BStack -> BProgramCursor -> Char -> IO (BStack, BProgramCursor)
 executeInstruction mem stack pc char = do
   case char of
-    '+' -> return $ ((instr+) stack, step pc)
+    '+' -> return $ (instr_add stack, step pc)
     _ -> return $ (stack, step pc)
   where
     step :: BProgramCursor -> BProgramCursor
@@ -87,8 +87,8 @@ executeInstruction mem stack pc char = do
     step (PC ((x, y), West)) = PC ((x - 1, y), West)
 
 
-(instr+) :: BStack -> BStack
-(instr+) stack =
+instr_add :: BStack -> BStack
+instr_add stack =
   let (stack', b) = BStack.pop stack
       (stack'', a) = BStack.pop stack'
   in BStack.push stack'' (a + b)
