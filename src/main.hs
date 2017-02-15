@@ -8,7 +8,7 @@ import Data.Array.IO
 
 import BStack
 import BMemory
-import BInstructionPointer
+import BProgramCounter
 import BInstructions
 
 ----------------------------------------
@@ -40,7 +40,7 @@ main = do
   mem <- newArray ((0, 0), (79, 24)) ' ' :: IO (BMemory)
   buildMemory mem progLines
 
-  let ip = BInstructionPointer.starting
+  let ip = BProgramCounter.starting
   let stack = BStack.empty
 
   runProgram mem stack ip
@@ -59,9 +59,9 @@ readProgram fname = do
       exitFailure) :: SomeException -> IO String)
 
 
-runProgram :: BMemory -> BStack -> BInstructionPointer -> IO ()
+runProgram :: BMemory -> BStack -> BProgramCounter -> IO ()
 runProgram mem stack ip = do
-  let (x, y) = BInstructionPointer.getPosition ip
+  let (x, y) = BProgramCounter.getPosition ip
   char <- BMemory.getValue mem (x, y)
 
   when _DEBUG $ do
@@ -74,10 +74,25 @@ runProgram mem stack ip = do
       runProgram mem stack' ip'
 
 
-executeInstruction :: BMemory -> BStack -> BInstructionPointer -> Char -> IO (BStack, BInstructionPointer)
+executeInstruction :: BMemory -> BStack -> BProgramCounter -> Char -> IO (BStack, BProgramCounter)
 executeInstruction mem stack ip char = do
   case char of
-    '+' -> return $ (BInstructions.add stack, ip)
+    '+' -> return $ (BInstructions.add stack, ip')
+    '-' -> return $ (BInstructions.subtract stack, ip')
+    '*' -> return $ (BInstructions.multiply stack, ip')
+    '/' -> return $ (BInstructions.divide stack, ip')
+    '.' -> do
+      stack' <- BInstructions.printInt stack
+      return (stack, ip')
+    '1' -> return $ (BInstructions.pushStack stack 1, ip')
+    '2' -> return $ (BInstructions.pushStack stack 2, ip')
+    '3' -> return $ (BInstructions.pushStack stack 3, ip')
+    '4' -> return $ (BInstructions.pushStack stack 4, ip')
+    '5' -> return $ (BInstructions.pushStack stack 5, ip')
+    '6' -> return $ (BInstructions.pushStack stack 6, ip')
+    '7' -> return $ (BInstructions.pushStack stack 7, ip')
+    '8' -> return $ (BInstructions.pushStack stack 8, ip')
+    '9' -> return $ (BInstructions.pushStack stack 9, ip')
     _ -> return $ (stack, step ip)
   where
-    step = BInstructionPointer.step
+    ip' = BProgramCounter.step ip
