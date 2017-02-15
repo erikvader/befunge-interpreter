@@ -5,15 +5,11 @@ import System.Exit
 import Control.Monad
 import Control.Exception
 import Data.Array.IO
+import System.Random
 
 import BStack
 import BMemory
-
-----------------------------------------
-
-type Position = (Int, Int)
-data Direction = North | East | South | West
-newtype BProgramCursor = PC (Position, Direction)
+import Types
 
 ----------------------------------------
 
@@ -65,7 +61,7 @@ runProgram mem stack pc@(PC ((x, y), dir)) = do
 
   when _DEBUG $ do
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")"
-  
+
   if char == '@'
     then return ()
     else do
@@ -92,13 +88,3 @@ instr_add stack =
   let (stack', b) = BStack.pop stack
       (stack'', a) = BStack.pop stack'
   in BStack.push stack'' (a + b)
-
-
-
-
-
-
-
-
-
-

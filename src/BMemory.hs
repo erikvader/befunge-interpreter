@@ -2,8 +2,9 @@ module BMemory (BMemory, buildMemory, get, put) where
 
 import Data.Array
 import Data.Array.IO
+import Types
 
-type Position = (Int, Int)
+--type Position = (Int, Int)
 type BMemory = IOArray Position Char
 
 --------------------------------------------------------------------------------
@@ -30,7 +31,7 @@ buildMemory arr progLines = do
 
       buildArrayAux2 :: IOArray Position Char -> Position -> String -> IO ()
       buildArrayAux2 arr _ "" = return ()
-      buildArrayAux2 arr (x, y) (c:cs) = do 
+      buildArrayAux2 arr (x, y) (c:cs) = do
         put arr (x, y) c
         buildArrayAux2 arr (x + 1, y) cs
 
