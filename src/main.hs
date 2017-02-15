@@ -7,10 +7,13 @@ import Control.Exception
 import Data.Array.IO
 import System.Random
 
-import BStack
-import BMemory
+import qualified BStack as BS
+import qualified BMemory as BM
 import Types
 
+----------------------------------------
+width = 80
+height = 25
 ----------------------------------------
 
 _DEBUG = True
@@ -33,11 +36,11 @@ main = do
   program <- readProgram filename
   let progLines = lines program
 
-  mem <- newArray ((0, 0), (79, 24)) ' ' :: IO (BMemory)
-  buildMemory mem progLines
+  mem <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO (BM.BMemory)
+  BM.buildMemory mem progLines
 
   let pc = PC ((0, 0), East)
-  let stack = BStack.empty
+  let stack = BS.empty
 
   runProgram mem stack pc
 
@@ -55,36 +58,38 @@ readProgram fname = do
       exitFailure) :: SomeException -> IO String)
 
 
-runProgram :: BMemory -> BStack -> BProgramCursor -> IO ()
+runProgram :: BM.BMemory -> BS.BStack -> BProgramCursor -> IO ()
 runProgram mem stack pc@(PC ((x, y), dir)) = do
-  char <- BMemory.get mem (x, y)
+  char <- BM.get mem (x, y)
 
   when _DEBUG $ do
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")"
 
   if char == '@'
-    then return ()
+    then do
+      putStrLn "Program finished"
+      return ()
     else do
       (stack', pc') <- executeInstruction mem stack pc char
       runProgram mem stack' pc'
 
 
 
-executeInstruction :: BMemory -> BStack -> BProgramCursor -> Char -> IO (BStack, BProgramCursor)
+executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCursor -> Char -> IO (BS.BStack, BProgramCursor)
 executeInstruction mem stack pc char = do
   case char of
     '+' -> return $ (instr_add stack, step pc)
     _ -> return $ (stack, step pc)
   where
     step :: BProgramCursor -> BProgramCursor
-    step (PC ((x, y), North)) = PC ((x, y - 1), North)
-    step (PC ((x, y), East)) = PC ((x + 1, y), East)
-    step (PC ((x, y), South)) = PC ((x, y + 1), South)
-    step (PC ((x, y), West)) = PC ((x - 1, y), West)
+    step (PC ((x, y), North)) = PC ((x, mod (y - 1) height), North)
+    step (PC ((x, y), East)) = PC ((mod (x + 1) width, y), East)
+    step (PC ((x, y), South)) = PC ((x, mod (y + 1) height), South)
+    step (PC ((x, y), West)) = PC ((mod (x - 1) width, y), West)
 
 
-instr_add :: BStack -> BStack
+instr_add :: BS.BStack -> BS.BStack
 instr_add stack =
-  let (stack', b) = BStack.pop stack
-      (stack'', a) = BStack.pop stack'
-  in BStack.push stack'' (a + b)
+  let (stack', b) = BS.pop stack
+      (stack'', a) = BS.pop stack'
+  in BS.push stack'' (a + b)
