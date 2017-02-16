@@ -6,23 +6,22 @@ import Control.Monad
 import Control.Exception
 import Data.Array.IO
 import System.Random
+import Data.Char
 
 import qualified BStack as BS
 import qualified BMemory as BM
+import qualified BProgramCounter as BPC
+import qualified BInstructions as BI
 import Types
 
 ----------------------------------------
-
-width = 80
-height = 25
-
 ----------------------------------------
 
 _DEBUG = True
 
 ----------------------------------------
 
-main :: IO ()
+--main :: IO ()
 main = do
   argv <- getArgs
   let argc = length argv
@@ -41,9 +40,8 @@ main = do
   mem <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO (BM.BMemory)
   BM.buildMemory mem progLines
 
-  let pc = PC ((0, 0), East)
   let stack = BS.empty
-  --let ip = BInstructionPointer.starting
+  let pc = BPC.starting
 
   runProgram mem stack pc
 
@@ -61,12 +59,10 @@ readProgram fname = do
       exitFailure) :: SomeException -> IO String)
 
 
-
-runProgram :: BM.BMemory -> BS.BStack -> BProgramCursor -> IO ()
-runProgram mem stack ip@(PC ((x, y), dir)) = do
-  --let (x, y) = BInstructionPointer.getPosition ip
+runProgram :: BM.BMemory -> BS.BStack -> BProgramCounter -> IO ()
+runProgram mem stack pc = do
+  let (x, y) = BPC.getPosition pc
   char <- BM.getValue mem (x, y)
-
 
   when _DEBUG $ do
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")"
@@ -76,27 +72,17 @@ runProgram mem stack ip@(PC ((x, y), dir)) = do
       putStrLn "Program finished"
       return ()
     else do
-      (stack', ip') <- executeInstruction mem stack ip char
-      runProgram mem stack' ip'
+      (stack', pc') <- executeInstruction mem stack pc char
+      runProgram mem stack' (BPC.step pc')
 
 
-executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCursor -> Char -> IO (BS.BStack, BProgramCursor)
+executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> Char -> IO (BS.BStack, BProgramCounter)
 executeInstruction mem stack pc char = do
   case char of
-    '+' -> return $ (instr_add stack, step pc)
-    _ -> return $ (stack, step pc)
-  where
-    --step :: BProgramCursor -> BProgramCursor
-    step (PC ((x, y), North)) = PC ((x, mod (y - 1) height), North)
-    step (PC ((x, y), East)) = PC ((mod (x + 1) width, y), East)
-    step (PC ((x, y), South)) = PC ((x, mod (y + 1) height), South)
-    step (PC ((x, y), West)) = PC ((mod (x - 1) width, y), West)
-
-    --step = BInstructionPointer.step
-
-
-instr_add :: BS.BStack -> BS.BStack
-instr_add stack =
-  let (stack', b) = BS.pop stack
-      (stack'', a) = BS.pop stack'
-  in BS.push stack'' (a + b)
+    '+' -> return $ (BI.add stack, pc)
+    '-' -> return $ (BI.subtract stack, pc)
+    '*' -> return $ (BI.multiply stack, pc)
+    '/' -> return $ (BI.divide stack, pc)
+    '.' -> BI.printInt stack pc
+    d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
+    _ -> return $ (stack, pc)

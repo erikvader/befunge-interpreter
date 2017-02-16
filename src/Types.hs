@@ -1,5 +1,7 @@
-module Types (Position, Direction(North, East, South, West), BProgramCursor(PC)) where
+module Types (Position, Direction(North, East, South, West), BProgramCounter(PC), width, height) where
 
 type Position = (Int, Int)
-data Direction = North | East | South | West
-newtype BProgramCursor = PC (Position, Direction) --TODO add string mode
+data Direction = North | East | South | West deriving Show
+newtype BProgramCounter = PC (Position, Direction) deriving (Show)
+width = 80 :: Int
+height = 25 :: Int

@@ -4,5 +4,13 @@ I noticed that we were declaring the same datatypes on multiple files. I tried
 to fix this by making another file called 'Types.hs' that would hold all datatypes
 in one place. Now of course, every file now needs to import this one if they need
 access some datatype.
-I also changed all imports in 'main.hs' to be qualified to reduce confusion, and 
+I also changed all imports in 'main.hs' to be qualified to reduce confusion, and
 name collisions.
+
+# 16/2 - 2017
+Today I was asked by Staffan to merge his feature branch into master. It worked out
+smoothly, not too many merge conflicts or big changes. While i was at it i changed
+how the command '.' was programmed, moved the stepping och the programCounter to
+a better place to make some for now unimplemented commands alot easier to do
+and finally compressed how digits were read from the grid from 10 lines to just 1
+by the help of the Data.Char module.
