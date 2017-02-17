@@ -1,4 +1,4 @@
-module BProgramCounter (starting, reverse, step, getPosition, setDirection) where
+module BProgramCounter (starting, reverse, step, getPosition, setDirection, getDirection) where
 
 import Prelude hiding (reverse)
 import Types
@@ -12,6 +12,7 @@ reverse :: BProgramCounter -> BProgramCounter
 step :: BProgramCounter -> BProgramCounter
 getPosition :: BProgramCounter -> Position
 setDirection :: BProgramCounter -> Direction -> BProgramCounter
+getDirection :: BProgramCounter -> Direction
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -36,3 +37,4 @@ getPosition (PC (pos, _)) = pos
 
 
 setDirection (PC (pos, _)) newdir = PC (pos, newdir)
+getDirection (PC (_, dir)) = dir

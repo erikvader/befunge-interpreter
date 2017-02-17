@@ -4,16 +4,13 @@ import Data.Array
 import Data.Array.IO
 import Types
 
---type Position = (Int, Int)
-type BMemory = IOArray Position Char
-
 --------------------------------------------------------------------------------
 -- interface
 --------------------------------------------------------------------------------
 
-buildMemory :: IOArray Position Char -> [String] -> IO ()
-getValue :: IOArray Position Char -> Position -> IO Char
-putValue :: IOArray Position Char -> Position -> Char -> IO ()
+buildMemory :: BMemory -> [String] -> IO ()
+getValue :: BMemory -> Position -> IO Char
+putValue :: BMemory -> Position -> Char -> IO ()
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -23,23 +20,23 @@ buildMemory arr progLines = do
   buildArrayAux arr progLines 0
   return ()
     where
-      buildArrayAux :: IOArray Position Char -> [String] -> Int -> IO ()
-      buildArrayAux _ _ y | y == height = error $ "Too many lines"
+      buildArrayAux :: BMemory -> [String] -> Int -> IO ()
       buildArrayAux _ [] _ = return ()
-      buildArrayAux arr (s:ss) y = do
-        buildArrayAux2 arr (0, y) s
-        buildArrayAux arr ss (y + 1)
+      buildArrayAux arr (s:ss) y
+         | y >= height = return ()
+         | otherwise = do
+            buildArrayAux2 arr (0, y) s
+            buildArrayAux arr ss (y + 1)
 
-      buildArrayAux2 :: IOArray Position Char -> Position -> String -> IO ()
-      buildArrayAux2 _ (x, y) _ | x == width = error $ "Too many characters on line " ++ show (y)
+      buildArrayAux2 :: BMemory -> Position -> String -> IO ()
       buildArrayAux2 _ _ "" = return ()
-      buildArrayAux2 arr (x, y) (c:cs) = do
-        putValue arr (x, y) c
-        buildArrayAux2 arr (x + 1, y) cs
+      buildArrayAux2 arr (x, y) (c:cs)
+         | x >= width = return ()
+         | otherwise = do
+            putValue arr (x, y) c
+            buildArrayAux2 arr (x + 1, y) cs
 
 
-getValue arr (x, y) =
-    readArray arr (mod x width, mod y height)
+getValue arr (x, y) = readArray arr (mod x width, mod y height)
 
-putValue arr (x, y) val = 
-    writeArray arr (mod x width, mod y height) val
+putValue arr (x, y) val = writeArray arr (mod x width, mod y height) val

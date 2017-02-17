@@ -34,14 +34,17 @@ main = do
     putStrLn "Too many arguments, ignoring..."
 
   let filename = argv !! 0
+
   program <- readProgram filename
   let progLines = lines program
 
-  mem <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO (BM.BMemory)
+  mem <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO (BMemory)
   BM.buildMemory mem progLines
 
   let stack = BS.empty
   let pc = BPC.starting
+
+  --bGen <- getStdGen
 
   runProgram mem stack pc
 
@@ -65,17 +68,17 @@ runProgram mem stack pc = do
   char <- BM.getValue mem (x, y)
 
   when _DEBUG $ do
-    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")"
+    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")" ++ " counter facing " ++ (show $ BPC.getDirection pc)
 
   if char == '@'
     then return ()
     else do
-      (stack', pc') <- executeInstruction mem stack pc char
+      (stack', pc') <- executeInstruction mem stack pc [] char
       runProgram mem stack' (BPC.step pc')
 
 
-executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> Char -> IO (BS.BStack, BProgramCounter)
-executeInstruction mem stack pc char = do
+executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> String -> Char -> IO (BS.BStack, BProgramCounter)
+executeInstruction mem stack pc input char = do
   case char of
     '+' -> return $ (BI.add stack, pc)
     '-' -> return $ (BI.subtract stack, pc)
@@ -89,9 +92,21 @@ executeInstruction mem stack pc char = do
     ':' -> return $ (BI.duplicate stack, pc)
     d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
     '.' -> do
-      stack' <- BI.printInt stack
-      return (stack', pc)
+            stack' <- BI.printInt stack
+            return (stack', pc)
     ',' -> do
-      stack' <- BI.printAscii stack
-      return (stack', pc)
+            stack' <- BI.printAscii stack
+            return (stack', pc)
+    '&' -> do
+            stack' <- BI.readInt stack input
+            return (stack', pc)
+    '~' -> do
+            stack' <- BI.readASCII stack input
+            return (stack', pc)
+    '?' -> do
+            pc' <- BI.randomDir pc
+            return (stack, pc')
     _ -> return $ (stack, pc)
+
+
+--parseArgs :: String ->

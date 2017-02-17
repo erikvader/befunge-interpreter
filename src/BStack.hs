@@ -19,6 +19,7 @@ newtype BStack = BStack [Int] deriving (Show)
 empty = BStack []
 
 
+--push bs@(BStack []) 0 = bs
 push (BStack bstack) val = BStack (val : bstack)
 
 
