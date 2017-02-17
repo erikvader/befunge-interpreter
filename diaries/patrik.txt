@@ -1,0 +1,5 @@
+17/2 -17
+
+Fixed some logical errors in the memory module, specificly:
+-Added constraint on height and width when importing from text file.
+-Fixed constraint checking for getValue and putValue functions.
