@@ -1,4 +1,4 @@
-module BProgramCounter (starting, reverse, step, getPosition) where
+module BProgramCounter (starting, reverse, step, getPosition, setDirection) where
 
 import Prelude hiding (reverse)
 import Types

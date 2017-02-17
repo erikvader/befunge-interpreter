@@ -39,11 +39,7 @@ buildMemory arr progLines = do
 
 
 getValue arr (x, y) =
-  if x < 0 || x >= width || y < 0 || y >= height
-    then return ' ' --allow illegal get / put? Or raise error?
-    else readArray arr (x, y)
+    readArray arr (mod x width, mod y height)
 
 putValue arr (x, y) val = 
-  if x < 0 || x >= width || y < 0 || y >= height
-    then return ()
-    else writeArray arr (x, y) val
+    writeArray arr (mod x width, mod y height) val

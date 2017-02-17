@@ -1,6 +1,7 @@
-module BInstructions (pushStack, add, subtract, multiply, divide, printInt) where
+module BInstructions (pushStack, add, subtract, multiply, divide, printInt, printAscii, duplicate) where
 
 import System.IO
+import Data.Char
 import Prelude hiding (subtract)
 
 import qualified BMemory as BM
@@ -17,7 +18,9 @@ add :: BS.BStack -> BS.BStack
 subtract :: BS.BStack -> BS.BStack
 multiply :: BS.BStack -> BS.BStack
 divide :: BS.BStack -> BS.BStack
-printInt :: BS.BStack -> BProgramCounter -> IO (BS.BStack, BProgramCounter)
+printInt :: BS.BStack -> IO BS.BStack
+printAscii :: BS.BStack -> IO BS.BStack
+duplicate :: BS.BStack -> BS.BStack
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -46,10 +49,19 @@ multiply stack =
 divide stack =
   let (stack', b) = BS.pop stack
       (stack'', a) = BS.pop stack'
-  in BS.push stack'' (a `div` b)
+  in case b of
+    0 -> BS.push stack'' 0
+    _ -> BS.push stack'' (a `div` b)
 
 
-printInt stack pc = do
+printInt stack = do
   let (stack', a) = BS.pop stack
-  putStr (show a ++ " ")
-  return (stack', pc)
+  putStr ((show a) ++ " ")
+  return stack'
+
+printAscii stack = do
+  let (stack', a) = BS.pop stack
+  putStr ([chr a])
+  return stack'
+
+duplicate stack = BS.push stack (snd $ BS.pop stack) -- Veto on not using BS.top by Patrik

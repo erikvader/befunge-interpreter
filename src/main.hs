@@ -68,9 +68,7 @@ runProgram mem stack pc = do
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")"
 
   if char == '@'
-    then do
-      putStrLn "Program finished"
-      return ()
+    then return ()
     else do
       (stack', pc') <- executeInstruction mem stack pc char
       runProgram mem stack' (BPC.step pc')
@@ -83,6 +81,17 @@ executeInstruction mem stack pc char = do
     '-' -> return $ (BI.subtract stack, pc)
     '*' -> return $ (BI.multiply stack, pc)
     '/' -> return $ (BI.divide stack, pc)
-    '.' -> BI.printInt stack pc
+    '^' -> return $ (stack, BPC.setDirection pc North)
+    '>' -> return $ (stack, BPC.setDirection pc East)
+    'v' -> return $ (stack, BPC.setDirection pc South)
+    '<' -> return $ (stack, BPC.setDirection pc West)
+    '#' -> return $ (stack, BPC.step pc)
+    ':' -> return $ (BI.duplicate stack, pc)
     d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
+    '.' -> do
+      stack' <- BI.printInt stack
+      return (stack', pc)
+    ',' -> do
+      stack' <- BI.printAscii stack
+      return (stack', pc)
     _ -> return $ (stack, pc)
