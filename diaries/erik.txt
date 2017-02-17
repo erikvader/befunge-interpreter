@@ -14,3 +14,10 @@ how the command '.' was programmed, moved the stepping och the programCounter to
 a better place to make some for now unimplemented commands alot easier to do
 and finally compressed how digits were read from the grid from 10 lines to just 1
 by the help of the Data.Char module.
+
+# 17/2 -2017
+Today we did alot of things. All three of us had a long programming session together
+and we discussed alot of things about our program. For example how we should handle IO
+and whether the top function in BStack really is neccessary or not.
+I also did a bunch of things on a new branch at home today. I added support for
+?, ~, and &. I also made a bunch of small changes that in my opinion makes stuff better.
