@@ -1,3 +1,7 @@
+2017-02-18
+
+Added better bounds-checking for BMemory.hs and began working on documentation.
+
 2017-02-15 15:47
 
 Added basic structure to the Github repository (folders /befunge-programs, /diaries and /src) in an attempt to keep things organized. Comitted files (main.hs, BStack.hs, BMemory.hs, BArray.hs) that had been worked on by me (and partially Erik) before we set up the repository.

@@ -20,6 +20,7 @@ buildMemory arr progLines = do
   buildArrayAux arr progLines 0
   return ()
     where
+
       buildArrayAux :: BMemory -> [String] -> Int -> IO ()
       buildArrayAux _ [] _ = return ()
       buildArrayAux arr (s:ss) y
