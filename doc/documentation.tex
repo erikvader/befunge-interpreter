@@ -1,0 +1,148 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{fullpage}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{url}
+\usepackage{nameref}
+
+\DeclareTextFontCommand{\code}{\ttfamily}
+
+% ----------------------------------------
+
+\title{Befunge-93 interpreter in Haskell\\
+\vspace{5pt}
+\small{A project for the course Program Design and Data Structures (1DL201)}}
+\author{Staffan Annerwall, Patrik Johansson, Erik Rimskog}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+empty
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+
+\vspace{36pt}
+
+\section{Introduction}
+We introduce the programming language Befunge-93 and briefly mention its expansion Funge-98.
+\label{sec:intro}
+
+\subsection{What is Befunge-93?}
+\label{sec:whatis}
+
+Befunge is a two-dimensional esoteric programming language developed by Chris Pressey in 1993 \cite{esolangs}. The program to be executed is stored in a 80 by 25 grid, or matrix (in this document also referred to as the “program space” or simply the “space”), where each cell can hold 1 byte of data. There are no variables available, but a LIFO-stack (last-in-first-out) at which values can be pushed onto and popped off of.
+
+Befunge-93 was the first iteration of several Befunge-specifications which eventually lead to the specification of Funge-98 (see \ref{sec:funge98}).
+
+\subsubsection{Program flow and the Program Counter}
+\label{sec:pc}
+
+Program flow is determined by a unique Program Counter (“PC”) and its position in the program space as well as direction, which at any given time is one of North, East, South, or West. The PC starts at position (0, 0) which is the upper-left corner of the program space and has an initial direction of East.
+
+When executing, the PC first reads the character at its current position in the program space, executes its corresponding command, and then moves to a new position.
+
+\subsubsection{The stack}
+\label{sec:stack}
+
+The stack has the property that it is never truly empty. Instead, if an attempt to pop a value of the stack is made when the stack is thought to be empty, a value of 0 is returned. The stack is in all but this one regard a regular LIFO-stack.
+
+\subsubsection{The program space}
+
+The program space in which program data is stored can topologically be thought of as a torus. Should the PC at any point try to move outside the bounds of the program space, it “wraps around” to the other side. For example, assuming that indexing starts at 0, if the PC is at position (6, 24) and attempts to move South, its new position would be \linebreak (6, 0), still moving South.
+
+\subsection{Funge-98}
+\label{sec:funge98}
+
+Funge-98 is a generalization of Befunge-93 in which program spaces can be either one-, two-, or three-dimensional. The specification also provides a paradigm for program spaces in an arbitrary number of dimensions \cite{funge98}. Besides new dimensions, Funge-98 also specifies several new instructions as well as concurrent program flow and a stack of stacks.
+
+\section{Running the program}
+\label{sec:howtorun}
+
+empty
+
+\subsection{Examples}
+\label{sec:examples}
+
+empty
+
+\section{Implementation}
+\label{sec:impl}
+
+In which we discuss how the interpreter is implemented, including the data structures and algorithms used.
+
+\subsection{Data structures}
+\label{sec:structures}
+
+empty
+
+\subsubsection{Stack}
+\label{sec:structstack}
+
+The Befunge stack, defined in \code{BStack.hs}, is implemented using a list of integers. It exports one identifier (\code{empty}) and three functions (\code{push}, \code{pop}, \code{top}). The type \code{BStack} is defined as a list of integers: \code{newtype BStack = BStack [Int] deriving (Show)}. The identifier \code{empty} (of type \code{BStack}) is identified simply as \code{BStack [\hspace{2pt}]}.
+
+\vspace{6pt}
+\noindent
+\code{push} (\code{BStack -> Int -> Bstack}) takes a (possibly empty) stack \code{s} and an integer \code{n}, and returns \code{s} with \code{n} on top.
+
+\vspace{6pt}
+\noindent
+\code{pop} (\code{BStack -> (BStack, Int)}) takes a stack \code{s} and returns a tuple \code{(s', t)} where \code{t} is the top element of \code{s} and \code{s'} is \code{s} with \code{t} removed. Should \code{s} be empty, a tuple \code{(BStack [\hspace{2pt}], 0)} is returned.
+
+\vspace{6pt}
+\noindent
+\code{top} (\code{BStack -> Int}) takes a stack and returns its top element without modifying the stack.
+
+\vspace{6pt}
+\noindent
+All three functions have precondition \code{True}.
+
+\subsubsection{Program space}
+\label{sec:structmem}
+
+The Befunge program space, the “memory”, is constructed using an array. \code{BMemory.hs} is a wrapper for an \code{IOArray} (from \code{Data.Array.IO}) and the type \code{BMemory} is synonymous to \code{IOArray Position Char}. It exports three functions:
+
+\vspace{6pt}
+\noindent
+\code{buildArray} (\code{BMemory -> [String] -> IO ()}) allocates an array and populates it with the characters in a list of strings. Any characters outside the bounds (defaults to 80$\times$25) are ignored.
+
+\vspace{6pt}
+\noindent
+\code{getValue} (\code{BMemory -> Position -> IO Char}) takes an array and returns the character at the given position.
+
+\vspace{6pt}
+\noindent
+\code{putValue} (\code{BMemory -> Position -> Char -> IO ()}) takes an array, a position and a value. It inserts the value at the given position and returns nothing.
+
+\vspace{6pt}
+\noindent
+Both \code{getValue} and \code{putValue} wraps array indices using modulus.
+
+\subsection{Algorithms}
+\label{sec:algorithms}
+
+empty
+
+\subsection{Major functions}
+\label{sec:functions}
+
+empty (remember specifications!)
+
+\subsubsection{Program flow}
+\label{sec:flow}
+
+also empty
+
+\section{Shortcomings and caveats}
+
+\vfill
+
+\bibliographystyle{ieeetr}
+\bibliography{documentation}
+
+\end{document}
