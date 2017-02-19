@@ -5,3 +5,9 @@ Fixed some logical errors in the memory module, specificly:
 -Fixed constraint checking for getValue and putValue functions.
 
 Also added and implemeted printAscii and duplicate as well as implemented setDirection
+
+19/2 -17
+
+Located error in inputInt, will be fixed by Erik.
+Added and implemented the functions modulo, logicalNot, greaterThan, ifHorizontal, ifVertical, swap and discard.
+Also oranized functions so they apear in the same order they do in the documentation for Befunge-93.
