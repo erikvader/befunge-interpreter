@@ -5,6 +5,7 @@
 \usepackage[english]{babel}
 \usepackage{url}
 \usepackage{nameref}
+\usepackage{amsmath}
 
 \DeclareTextFontCommand{\code}{\ttfamily}
 
@@ -66,10 +67,68 @@ Funge-98 is a generalization of Befunge-93 in which program spaces can be either
 
 empty
 
-\subsection{Examples}
+\subsection{Linux}
+\label{sec:runlinux}
+
+empty
+
+\subsection{Windows}
+\label{sec:runwindows}
+
+empty
+
+\subsection{Befunge instruction characters}
+\label{sec:instructions}
+
+Befunge-93 allows for a total of 35 actions, 9 of which simply push numeric values 0 -- 9.
+
+See Table \ref{tab:instr} for a complete list of all instructions that the interpreter handles. If the PC encounters an unrecognized character (i.e. a character that is not in the table), it ignores it completely -- as if it were a space (\textvisiblespace).
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{c|l}
+Character & Action\\
+\hline
+\code{0} -- \code{9} & Push the desired value onto the stack.\\
+\code{+} & Pop \code{b} and \code{a} off the stack, then push $\code{a} + \code{b}$.\\
+\code{-} & Pop \code{b} and \code{a} off the stack, then push $\code{a} - \code{b}$.\\
+\code{*} & Pop \code{b} and \code{a} off the stack, then push $\code{a} \times \code{b}$.\\
+\code{/} & Pop \code{b} and \code{a} off the stack, then push $\code{a} / \code{b}$.\\
+\code{\%} & Pop \code{b} and \code{a} off the stack, then push $\code{a} \text{ mod } \code{b}$.\\
+\code{\`} & Pop \code{b} and \code{a} off the stack. If $\code{a} > \code{b}$ then push \code{1}, otherwise push \code{0}.\\
+\code{!} & Pop \code{a} and if \code{a} is non-zero then push \code{0}, otherwise push \code{1}.\\
+\code{>} & Instruct the PC to move East.\\
+\code{v} & Instruct the PC to move South.\\
+\code{<} & Instruct the PC to move West.\\
+\code{\^} & Instruct the PC to move North.\\
+\code{?} & Instruct the PC to move in a random cardinal direction.\\
+\code{\#} & Skip the next instruction; the PC moves twice.\\
+\code{\_} & Pop \code{a} and instruct the PC to move West if $\code{a} \neq 0$, otherwise East.\\
+\code{|} & Pop \code{a} and instruct the PC to move North if $\code{a} \neq 0$, otherwise South.\\
+\code{:} & Duplicate the top value of the stack.\\
+\code{\textbackslash} & Swap the top two values of the stack.\\
+\code{\$} & Pop a value off the stack and discard it.\\
+\code{g} & Pop \code{y} and \code{x}, then push the value of the character at position $(\code{x}, \code{y})$.\\
+\code{p} & Pop \code{y}, \code{x} and \code{v}, then insert \code{v} at position $(\code{x}, \code{y})$.\\
+\code{\&} & Wait for user value input and push it.\\
+\code{\textasciitilde} & Wait for user character input and push its ASCII value.\\
+\code{.} & Pop a value and print it.\\
+\code{,} & Pop a value and print its ASCII character.\\
+\code{\textvisiblespace} & Spaces are ignored, the PC continues and no modifications are made. \\
+\code{@} & Terminate the program.
+\end{tabular}
+\caption{A list of all Befunge-93 instructions; the interpreter handles all of them correctly.}
+\label{tab:instr}
+\end{table}
+
+\subsection{Example programs}
 \label{sec:examples}
 
 empty
+
+\subsubsection{Basic arithmetic}
+
+
 
 \section{Implementation}
 \label{sec:impl}
