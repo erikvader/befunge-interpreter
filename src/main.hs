@@ -44,8 +44,6 @@ main = do
   let stack = BS.empty
   let pc = BPC.starting
 
-  --bGen <- getStdGen
-
   runProgram mem stack pc
 
 
@@ -68,17 +66,17 @@ runProgram mem stack pc = do
   char <- BM.getValue mem (x, y)
 
   when _DEBUG $ do
-    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")" ++ " counter facing " ++ (show $ BPC.getDirection pc)
+    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ (show x) ++ ", " ++ (show y) ++ ")" ++ " counter facing " ++ (show $ BPC.getDirection pc) ++ " StringMode=" ++ (show $ BPC.isStringMode pc)
 
   if char == '@'
     then return ()
     else do
-      (stack', pc') <- executeInstruction mem stack pc [] char
+      (stack', pc') <- executeInstruction mem stack pc char
       runProgram mem stack' (BPC.step pc')
 
 
-executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> String -> Char -> IO (BS.BStack, BProgramCounter)
-executeInstruction mem stack pc input char = do
+executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> Char -> IO (BS.BStack, BProgramCounter)
+executeInstruction mem stack pc char = do
   case char of
     '+' -> return $ (BI.add stack, pc)
     '-' -> return $ (BI.subtract stack, pc)
@@ -90,7 +88,6 @@ executeInstruction mem stack pc input char = do
     '<' -> return $ (stack, BPC.setDirection pc West)
     '#' -> return $ (stack, BPC.step pc)
     ':' -> return $ (BI.duplicate stack, pc)
-    d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
     '.' -> do
             stack' <- BI.printInt stack
             return (stack', pc)
@@ -98,15 +95,15 @@ executeInstruction mem stack pc input char = do
             stack' <- BI.printAscii stack
             return (stack', pc)
     '&' -> do
-            stack' <- BI.readInt stack input
+            stack' <- BI.readInt stack []
             return (stack', pc)
     '~' -> do
-            stack' <- BI.readASCII stack input
+            stack' <- BI.readASCII stack []
             return (stack', pc)
     '?' -> do
             pc' <- BI.randomDir pc
             return (stack, pc')
+    '"' -> return (stack, BI.toggleStringMode pc)
+    c | BPC.isStringMode pc && isAscii c -> return (BS.push stack (ord c), pc)
+    d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
     _ -> return $ (stack, pc)
-
-
---parseArgs :: String ->

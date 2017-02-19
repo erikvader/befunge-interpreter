@@ -9,7 +9,8 @@ module BInstructions (
    duplicate,
    readInt,
    readASCII,
-   randomDir) where
+   randomDir,
+   toggleStringMode) where
 
 import System.IO
 import Data.Char
@@ -25,17 +26,18 @@ import Types
 -- interface
 --------------------------------------------------------------------------------
 
-pushStack  :: BS.BStack -> Int -> BS.BStack
-add        :: BS.BStack -> BS.BStack
-subtract   :: BS.BStack -> BS.BStack
-multiply   :: BS.BStack -> BS.BStack
-divide     :: BS.BStack -> BS.BStack
-printInt   :: BS.BStack -> IO BS.BStack
-printAscii :: BS.BStack -> IO BS.BStack
-duplicate  :: BS.BStack -> BS.BStack
-readInt    :: BS.BStack -> String -> IO (BS.BStack)
-readASCII  :: BS.BStack -> String -> IO (BS.BStack)
-randomDir  :: BProgramCounter -> IO (BProgramCounter)
+pushStack        :: BS.BStack -> Int -> BS.BStack
+add              :: BS.BStack -> BS.BStack
+subtract         :: BS.BStack -> BS.BStack
+multiply         :: BS.BStack -> BS.BStack
+divide           :: BS.BStack -> BS.BStack
+printInt         :: BS.BStack -> IO BS.BStack
+printAscii       :: BS.BStack -> IO BS.BStack
+duplicate        :: BS.BStack -> BS.BStack
+readInt          :: BS.BStack -> String -> IO (BS.BStack)
+readASCII        :: BS.BStack -> String -> IO (BS.BStack)
+randomDir        :: BProgramCounter -> IO (BProgramCounter)
+toggleStringMode :: BProgramCounter -> BProgramCounter
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -83,18 +85,19 @@ duplicate stack = BS.push stack (BS.top stack)
 
 readInt stack input = do
    char <- readFromInput input
-   return $ BS.push stack (digitToInt char)
+   return $ BS.push stack (read (firstWord char) :: Int)
+   where firstWord s = head $ words s
 
 readASCII stack input = do
    char <- readFromInput input
-   return $ BS.push stack (ord char)
+   return $ BS.push stack (ord (head char))
 
 --tar en inputsträng, om den är tom ber den användaren att skriva in ngt
 readFromInput [] = do
    putStr ">>"
    inp <- getLine
-   return $ head inp
-readFromInput input = return $ head input
+   return $ inp
+readFromInput input = return $ input
 
 randomDir pc = do
    rand <- randomRIO (1, 4::Int)
@@ -104,3 +107,5 @@ randomDir pc = do
       dir 2 = North
       dir 3 = West
       dir 4 = East
+
+toggleStringMode pc = BPC.setStringMode pc (not (BPC.isStringMode pc))
