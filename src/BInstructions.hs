@@ -146,12 +146,16 @@ printAscii stack = do
 
 readInt stack input = do
    char <- readFromInput input
-   return $ BS.push stack (read (firstWord char) :: Int)
+   if null char
+      then return stack
+      else return $ BS.push stack (read (firstWord char) :: Int)
    where firstWord s = head $ words s
 
 readASCII stack input = do
    char <- readFromInput input
-   return $ BS.push stack (ord (head char))
+   if null char
+      then return stack
+      else return $ BS.push stack (ord (head char))
 
 --tar en inputsträng, om den är tom ber den användaren att skriva in ngt
 readFromInput :: String -> IO String
