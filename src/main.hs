@@ -78,6 +78,8 @@ runProgram mem stack pc = do
 executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> Char -> IO (BS.BStack, BProgramCounter)
 executeInstruction mem stack pc char = do
   case char of
+     c | BPC.isStringMode pc && isAscii c -> return (BS.push stack (ord c), pc)
+     d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
     '+' -> return $ (BI.add stack, pc)
     '-' -> return $ (BI.subtract stack, pc)
     '*' -> return $ (BI.multiply stack, pc)
@@ -111,6 +113,4 @@ executeInstruction mem stack pc char = do
             stack' <- BI.readASCII stack []
             return (stack', pc)
     '"' -> return (stack, BI.toggleStringMode pc)
-    c | BPC.isStringMode pc && isAscii c -> return (BS.push stack (ord c), pc)
-    d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
     _ -> return $ (stack, pc)
