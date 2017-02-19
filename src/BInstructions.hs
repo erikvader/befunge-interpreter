@@ -24,7 +24,6 @@ import Data.Char
 import System.Random
 import Prelude hiding (subtract)
 
-import qualified BMemory as BM
 import qualified BStack as BS
 import qualified BProgramCounter as BPC
 import Types
@@ -41,7 +40,7 @@ divide      :: BS.BStack -> BS.BStack
 modulo      :: BS.BStack -> BS.BStack
 logicalNot  :: BS.BStack -> BS.BStack
 greaterThan :: BS.BStack -> BS.BStack
-randomDir   :: BProgramCounter -> IO (BProgramCounter)
+randomDir   :: BProgramCounter -> IO BProgramCounter
 ifHorizontal:: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
 ifVertical  :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
 duplicate   :: BS.BStack -> BS.BStack
@@ -49,8 +48,8 @@ swap        :: BS.BStack -> BS.BStack
 discard     :: BS.BStack -> BS.BStack
 printInt    :: BS.BStack -> IO BS.BStack
 printAscii  :: BS.BStack -> IO BS.BStack
-readInt     :: BS.BStack -> String -> IO (BS.BStack)
-readASCII   :: BS.BStack -> String -> IO (BS.BStack)
+readInt     :: BS.BStack -> String -> IO BS.BStack
+readASCII   :: BS.BStack -> String -> IO BS.BStack
 toggleStringMode :: BProgramCounter -> BProgramCounter
 
 --------------------------------------------------------------------------------
@@ -99,9 +98,9 @@ logicalNot stack =
 greaterThan stack =
   let (stack', b) = BS.pop stack
       (stack'', a) = BS.pop stack'
-  in case a > b of
-    True -> BS.push stack'' 1
-    False -> BS.push stack'' 0
+  in if a > b
+      then BS.push stack'' 1
+      else BS.push stack'' 0
 
 randomDir pc = do
    rand <- randomRIO (1, 4::Int)
@@ -110,7 +109,7 @@ randomDir pc = do
       dir 1 = South
       dir 2 = North
       dir 3 = West
-      dir 4 = East
+      dir _ = East
 
 ifHorizontal stack pc =
   let (stack', a) = BS.pop stack
@@ -129,7 +128,7 @@ duplicate stack = BS.push stack (BS.top stack)
 swap stack =
   let (stack', a) = BS.pop stack
       (stack'', b) = BS.pop stack'
-  in (BS.push (BS.push stack'' a) b)
+  in BS.push (BS.push stack'' a) b
 
 discard stack =
   let (stack', _) = BS.pop stack
@@ -137,12 +136,12 @@ discard stack =
 
 printInt stack = do
   let (stack', a) = BS.pop stack
-  putStr ((show a) ++ " ")
+  putStr (show a ++ " ")
   return stack'
 
 printAscii stack = do
   let (stack', a) = BS.pop stack
-  putStr ([chr a])
+  putStr [chr a]
   return stack'
 
 readInt stack input = do
@@ -155,10 +154,10 @@ readASCII stack input = do
    return $ BS.push stack (ord (head char))
 
 --tar en inputsträng, om den är tom ber den användaren att skriva in ngt
+readFromInput :: String -> IO String
 readFromInput [] = do
    putStr ">>"
-   inp <- getLine
-   return $ inp
-readFromInput input = return $ input
+   getLine
+readFromInput input = return input
 
 toggleStringMode pc = BPC.setStringMode pc (not (BPC.isStringMode pc))
