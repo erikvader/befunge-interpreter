@@ -16,7 +16,8 @@ module BInstructions (
    printInt,
    printAscii,
    readInt,
-   readASCII) where
+   readASCII,
+   toggleStringMode) where
 
 import System.IO
 import Data.Char
@@ -50,7 +51,7 @@ printInt    :: BS.BStack -> IO BS.BStack
 printAscii  :: BS.BStack -> IO BS.BStack
 readInt     :: BS.BStack -> String -> IO (BS.BStack)
 readASCII   :: BS.BStack -> String -> IO (BS.BStack)
-
+toggleStringMode :: BProgramCounter -> BProgramCounter
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -111,13 +112,13 @@ randomDir pc = do
       dir 3 = West
       dir 4 = East
 
-ifHorizontal stack pc = 
+ifHorizontal stack pc =
   let (stack', a) = BS.pop stack
   in case a of
     0 -> (stack', BPC.setDirection pc East)
     _ -> (stack', BPC.setDirection pc West)
 
-ifVertical stack pc = 
+ifVertical stack pc =
   let (stack', a) = BS.pop stack
   in case a of
     0 -> (stack', BPC.setDirection pc South)
@@ -125,7 +126,7 @@ ifVertical stack pc =
 
 duplicate stack = BS.push stack (BS.top stack)
 
-swap stack = 
+swap stack =
   let (stack', a) = BS.pop stack
       (stack'', b) = BS.pop stack'
   in (BS.push (BS.push stack'' a) b)
@@ -144,18 +145,20 @@ printAscii stack = do
   putStr ([chr a])
   return stack'
 
-
 readInt stack input = do
    char <- readFromInput input
-   return $ BS.push stack (digitToInt char)
+   return $ BS.push stack (read (firstWord char) :: Int)
+   where firstWord s = head $ words s
 
 readASCII stack input = do
    char <- readFromInput input
-   return $ BS.push stack (ord char)
+   return $ BS.push stack (ord (head char))
 
 --tar en inputsträng, om den är tom ber den användaren att skriva in ngt
 readFromInput [] = do
    putStr ">>"
    inp <- getLine
-   return $ head inp
-readFromInput input = return $ head input
+   return $ inp
+readFromInput input = return $ input
+
+toggleStringMode pc = BPC.setStringMode pc (not (BPC.isStringMode pc))
