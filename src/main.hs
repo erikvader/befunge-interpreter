@@ -80,17 +80,27 @@ runProgram mem stack pc = do
 executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> String -> Char -> IO (BS.BStack, BProgramCounter)
 executeInstruction mem stack pc input char = do
   case char of
+    d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
     '+' -> return $ (BI.add stack, pc)
     '-' -> return $ (BI.subtract stack, pc)
     '*' -> return $ (BI.multiply stack, pc)
     '/' -> return $ (BI.divide stack, pc)
+    '%' -> return $ (BI.modulo stack, pc)
+    '!' -> return $ (BI.logicalNot stack, pc)
+    '`' -> return $ (BI.greaterThan stack, pc)
     '^' -> return $ (stack, BPC.setDirection pc North)
     '>' -> return $ (stack, BPC.setDirection pc East)
     'v' -> return $ (stack, BPC.setDirection pc South)
     '<' -> return $ (stack, BPC.setDirection pc West)
-    '#' -> return $ (stack, BPC.step pc)
+    '_' -> return $ BI.ifHorizontal stack pc
+    '|' -> return $ BI.ifVertical stack pc
     ':' -> return $ (BI.duplicate stack, pc)
-    d | isDigit d -> return $ (BI.pushStack stack (digitToInt d), pc)
+    '\\' -> return $ (BI.swap stack, pc)
+    '$' -> return $ (BI.discard stack, pc)
+    '#' -> return $ (stack, BPC.step pc)
+    '?' -> do
+            pc' <- BI.randomDir pc
+            return (stack, pc')
     '.' -> do
             stack' <- BI.printInt stack
             return (stack', pc)
@@ -103,9 +113,6 @@ executeInstruction mem stack pc input char = do
     '~' -> do
             stack' <- BI.readASCII stack input
             return (stack', pc)
-    '?' -> do
-            pc' <- BI.randomDir pc
-            return (stack, pc')
     _ -> return $ (stack, pc)
 
 
