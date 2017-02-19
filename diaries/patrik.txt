@@ -3,3 +3,5 @@
 Fixed some logical errors in the memory module, specificly:
 -Added constraint on height and width when importing from text file.
 -Fixed constraint checking for getValue and putValue functions.
+
+Also added and implemeted printAscii and duplicate as well as implemented setDirection
