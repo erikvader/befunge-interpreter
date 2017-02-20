@@ -1,3 +1,7 @@
+2017-02-20
+
+Separated initialization of memory from function main to simplify future testing.
+
 2017-02-19
 
 Added instruction table to documentation.

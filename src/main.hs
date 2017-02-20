@@ -33,16 +33,20 @@ main = do
 
   let filename = head argv
 
-  program <- readProgram filename
-  let progLines = lines program
+  rawProgram <- readProgram filename
+  let progLines = lines rawProgram
 
-  mem <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO BMemory
-  BM.buildMemory mem progLines
+  (memory, stack, pc) <- initialize progLines
 
-  let stack = BS.empty
-  let pc = BPC.starting
+  runProgram memory stack pc
 
-  runProgram mem stack pc
+
+initialize :: [String] -> IO (BMemory, BS.BStack, BProgramCounter)
+initialize progLines = do
+  memory <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO BMemory
+  BM.buildMemory memory progLines
+
+  return (memory, BS.empty, BPC.starting)
 
 
 readProgram :: String -> IO String
