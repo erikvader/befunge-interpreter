@@ -1,6 +1,7 @@
 2017-02-20
 
-Separated initialization of memory from function main to simplify future testing.
+- Separated initialization of memory from function main to simplify future testing.
+- Continue work on documentation; description of the funge space and some examples.
 
 2017-02-19
 
