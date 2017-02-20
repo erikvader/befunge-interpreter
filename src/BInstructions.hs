@@ -137,11 +137,13 @@ discard stack =
 printInt stack = do
   let (stack', a) = BS.pop stack
   putStr (show a ++ " ")
+  hFlush stdout
   return stack'
 
 printAscii stack = do
   let (stack', a) = BS.pop stack
   putStr [chr a]
+  hFlush stdout
   return stack'
 
 readInt stack input = do
@@ -161,6 +163,7 @@ readASCII stack input = do
 readFromInput :: String -> IO String
 readFromInput [] = do
    putStr ">>"
+   hFlush stdout
    getLine
 readFromInput input = return input
 

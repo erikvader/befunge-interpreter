@@ -15,9 +15,21 @@ a better place to make some for now unimplemented commands alot easier to do
 and finally compressed how digits were read from the grid from 10 lines to just 1
 by the help of the Data.Char module.
 
-# 17/2 -2017
+# 17/2 - 2017
 Today we did alot of things. All three of us had a long programming session together
 and we discussed alot of things about our program. For example how we should handle IO
 and whether the top function in BStack really is neccessary or not.
 I also did a bunch of things on a new branch at home today. I added support for
 ?, ~, and &. I also made a bunch of small changes that in my opinion makes stuff better.
+
+# 20/2 - 2017
+Today I added stringmode to ProgramCounter. It was easier than i first thought,
+i thought that i would need to change alot of pattern matches all over the place.
+But because we are smart with our program structure I only needed to change
+pattern matches in one file. I also ran hlint and ghc-mod on our files and got
+pages upon pages of suggestions and warnings. It took a while to fix all of them,
+but luckily most of the warnings were about unnecessary 'do's and '$'s. I also fixed
+som small errors with the input handling. Now you can enter empty inputs without
+crashing and it should now work with all consoles. The error we had was that some
+consoles doesn't want to print its buffer until a newline character wanted to be printed.
+So I fixed that by calling a flush function after every 'putStr'.
