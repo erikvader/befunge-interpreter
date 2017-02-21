@@ -113,4 +113,11 @@ executeInstruction mem stack pc char =
     '~' -> do
             stack' <- BI.readASCII stack []
             return (stack', pc)
+    'g' -> do
+            stack' <- BI.getASCII mem stack
+            return (stack', pc)
+    'p' -> do
+            stack' <- BI.putASCII mem stack
+            return (stack', pc)
+
     _ -> return (stack, pc)

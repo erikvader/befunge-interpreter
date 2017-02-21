@@ -33,3 +33,9 @@ som small errors with the input handling. Now you can enter empty inputs without
 crashing and it should now work with all consoles. The error we had was that some
 consoles doesn't want to print its buffer until a newline character wanted to be printed.
 So I fixed that by calling a flush function after every 'putStr'.
+
+# 21/2 - 2017
+Today I implemented the last two instruction-thingies, p and g. It took me about
+one hour. The essentials of the program are therefore done, so only function definitions
+and extra features are left. If we have time we consider adding flags so you
+can change the behaviour of the program without changing the source code.

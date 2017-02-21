@@ -17,7 +17,9 @@ module BInstructions (
    printAscii,
    readInt,
    readASCII,
-   toggleStringMode) where
+   toggleStringMode,
+   getASCII,
+   putASCII) where
 
 import System.IO
 import Data.Char
@@ -26,31 +28,34 @@ import Prelude hiding (subtract)
 
 import qualified BStack as BS
 import qualified BProgramCounter as BPC
+import qualified BMemory as BM
 import Types
 
 --------------------------------------------------------------------------------
 -- interface
 --------------------------------------------------------------------------------
 
-pushStack   :: BS.BStack -> Int -> BS.BStack
-add         :: BS.BStack -> BS.BStack
-subtract    :: BS.BStack -> BS.BStack
-multiply    :: BS.BStack -> BS.BStack
-divide      :: BS.BStack -> BS.BStack
-modulo      :: BS.BStack -> BS.BStack
-logicalNot  :: BS.BStack -> BS.BStack
-greaterThan :: BS.BStack -> BS.BStack
-randomDir   :: BProgramCounter -> IO BProgramCounter
-ifHorizontal:: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
-ifVertical  :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
-duplicate   :: BS.BStack -> BS.BStack
-swap        :: BS.BStack -> BS.BStack
-discard     :: BS.BStack -> BS.BStack
-printInt    :: BS.BStack -> IO BS.BStack
-printAscii  :: BS.BStack -> IO BS.BStack
-readInt     :: BS.BStack -> String -> IO BS.BStack
-readASCII   :: BS.BStack -> String -> IO BS.BStack
+pushStack        :: BS.BStack -> Int -> BS.BStack
+add              :: BS.BStack -> BS.BStack
+subtract         :: BS.BStack -> BS.BStack
+multiply         :: BS.BStack -> BS.BStack
+divide           :: BS.BStack -> BS.BStack
+modulo           :: BS.BStack -> BS.BStack
+logicalNot       :: BS.BStack -> BS.BStack
+greaterThan      :: BS.BStack -> BS.BStack
+randomDir        :: BProgramCounter -> IO BProgramCounter
+ifHorizontal     :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
+ifVertical       :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
+duplicate        :: BS.BStack -> BS.BStack
+swap             :: BS.BStack -> BS.BStack
+discard          :: BS.BStack -> BS.BStack
+printInt         :: BS.BStack -> IO BS.BStack
+printAscii       :: BS.BStack -> IO BS.BStack
+readInt          :: BS.BStack -> String -> IO BS.BStack
+readASCII        :: BS.BStack -> String -> IO BS.BStack
 toggleStringMode :: BProgramCounter -> BProgramCounter
+getASCII         :: BMemory -> BS.BStack -> IO BS.BStack
+putASCII         :: BMemory -> BS.BStack -> IO BS.BStack
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -168,3 +173,16 @@ readFromInput [] = do
 readFromInput input = return input
 
 toggleStringMode pc = BPC.setStringMode pc (not (BPC.isStringMode pc))
+
+getASCII mem stack = do
+   let (stack', y) = BS.pop stack
+   let (stack'', x) = BS.pop stack'
+   val <- BM.getValue mem (x, y)
+   return $ BS.push stack'' (ord val)
+
+putASCII mem stack = do
+   let (stack', y) = BS.pop stack
+   let (stack'', x) = BS.pop stack'
+   let (stack''', val) = BS.pop stack''
+   BM.putValue mem (x, y) (chr val)
+   return stack'''
