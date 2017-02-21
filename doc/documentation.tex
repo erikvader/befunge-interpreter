@@ -66,7 +66,7 @@ The stack has the property that it is never truly empty. Instead, if an attempt 
 
 The program space consists of 2,000 cells arranged in a 80 by 25 grid. The upper left corner of this grid is given the coordinate position $(0, 0)$ and the lower right corner is identified as $(79, 24)$, see Figure \ref{fig:grid}.
 
-The grid can topologically be thought of as a torus (or a dough-nut); should the PC at any point try to move outside the bounds of the program space, it “wraps around” to the other side. For example, assuming that indexing starts at 0, if the PC is at position (6, 24) and attempts to move South, its new position would be (6, 0), still facing South.
+The grid can topologically be thought of as a torus (the surface of a dough-nut); should the PC at any point try to move outside the bounds of the program space, it “wraps around” to the other side. For example, assuming that indexing starts at 0, if the PC is at position (6, 24) and attempts to move South, its new position would be (6, 0), still facing South.
 
 \begin{figure}[!ht]
 \centering
@@ -81,7 +81,7 @@ $\vdots$ & $\vdots$ & $\ddots$ & $\vdots$\\
 $(0, 24)$ & $(1, 24)$ & $\cdots$ & $(79, 24)$\\
 \hline
 \end{tabular}
-\caption{A visualization of the program space in Befunge.}
+\caption{A visualization of the program space in Befunge where each cell is labeled with its coordinates.}
 \label{fig:grid}
 \end{figure}
 
@@ -108,22 +108,22 @@ empty
 \subsection{Befunge instruction characters}
 \label{sec:instructions}
 
-Befunge-93 allows for a total of 35 actions, 9 of which simply push numeric values 0 -- 9.
+Befunge-93 specifies a total of 35 actions, 9 of which simply push the numeric values 0 -- 9 to the stack, each represented by an ASCII character. Arithmetic is executed using Reverse Polish Notation (RPN)
 
-See Table \ref{tab:instr} for a complete list of all instructions that the interpreter handles. If the PC encounters an unrecognized character (i.e. a character that is not in the table), it ignores it completely -- as if it were a space (\textvisiblespace).
+Table \ref{tab:instr} contains a complete list of all characters that the interpreter recognizes. If the PC encounters an unrecognized character, it ignores it completely -- as if it were a space (\textvisiblespace).
 
 \begin{table}[!hb]
 \centering
-\begin{tabular}{c|l}
+\begin{tabular}{r|l}
 Character & Action\\
 \hline
 \code{0} -- \code{9} & Push the desired value onto the stack.\\
 \code{+} & Pop \code{b} and \code{a} off the stack, then push $\code{a} + \code{b}$.\\
-\code{-} & Pop \code{b} and \code{a} off the stack, then push $\code{a} - \code{b}$.\\
-\code{*} & Pop \code{b} and \code{a} off the stack, then push $\code{a} \times \code{b}$.\\
-\code{/} & Pop \code{b} and \code{a} off the stack, then push $\code{a} / \code{b}$.\\
-\code{\%} & Pop \code{b} and \code{a} off the stack, then push $\code{a} \text{ mod } \code{b}$.\\
-\code{\`} & Pop \code{b} and \code{a} off the stack. If $\code{a} > \code{b}$ then push \code{1}, otherwise push \code{0}.\\
+\code{-} & Pop \code{b}, \code{a}. Push $\code{a} - \code{b}$.\\
+\code{*} & Pop \code{b}, \code{a}. Push $\code{a} \cdot \code{b}$.\\
+\code{/} & Pop \code{b}, \code{a}. Push \code{0} if $\code{b} = \code{0}$, otherwise the integer part of $\code{a} / \code{b}$.\\
+\code{\%} & Pop \code{b}, \code{a}. Push $\code{a} \text{ mod } \code{b}$.\\
+\code{\`} & Pop \code{b} and \code{a}. If $\code{a} > \code{b}$ then push \code{1}, otherwise push \code{0}.\\
 \code{!} & Pop \code{a} and if \code{a} is non-zero then push \code{0}, otherwise push \code{1}.\\
 \code{>} & Instruct the PC to move East.\\
 \code{v} & Instruct the PC to move South.\\
@@ -131,8 +131,8 @@ Character & Action\\
 \code{\^} & Instruct the PC to move North.\\
 \code{?} & Instruct the PC to move in a random cardinal direction.\\
 \code{\#} & Skip the next instruction; the PC moves twice.\\
-\code{\_} & Pop \code{a} and instruct the PC to move West if $\code{a} \neq 0$, otherwise East.\\
-\code{|} & Pop \code{a} and instruct the PC to move North if $\code{a} \neq 0$, otherwise South.\\
+\code{\_} & Pop \code{a} and instruct the PC to move West if $\code{a} \neq \code{0}$, otherwise East.\\
+\code{|} & Pop \code{a} and instruct the PC to move North if $\code{a} \neq \code{0}$, otherwise South.\\
 \code{:} & Duplicate the top value of the stack.\\
 \code{\textbackslash} & Swap the top two values of the stack.\\
 \code{\$} & Pop a value off the stack and discard it.\\
@@ -145,24 +145,43 @@ Character & Action\\
 \code{\textvisiblespace} & Spaces are ignored, the PC continues and no other modifications are made. \\
 \code{@} & Terminate the program.
 \end{tabular}
-\caption{A list of all Befunge-93 instructions; the interpreter handles all of them correctly.}
+\caption{All instructions available in Befunge-93.}
 \label{tab:instr}
 \end{table}
 
-\subsection{Example programs}
+\subsection{Example Befunge-93 programs}
 \label{sec:examples}
 
 empty
 
 \subsubsection{Basic arithmetic}
 
-Addition (\code{+}), subtraction (\code{-}), multiplication (\code{*}), division (\code{/}) and modulo (\code{\%}) behave as one would expect, with the top-most of the two values popped off the stack acting as the second argument. That is, the program \code{65-.} prints $1$ (and not $-1$). Divison by \code{0} pushes \code{0} back to the stack regardless of the value of the numerator.
+Addition (\code{+}), subtraction (\code{-}), multiplication (\code{*}), division (\code{/}) and modulo (\code{\%}) execute using Reverse Polish Notation (RPN). That is, the program \code{65-.} prints $1$ (and not $-1$). Divison by \code{0} pushes \code{0} back to the stack regardless of the value of the numerator.
 
-An example that utilizes all of these instructions is \code{329*+2*7/4\%.@}. It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like \code{18 3}, where the left-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack then contains a single value \code{21}. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack \code{6}. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. \code{2} is printed by \code{.} and the program stops after reading the \code{@}-character.
+An example that utilizes all of these instructions is \code{329*+2*7/4\%.@}. It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like \code{18 3}, where the left-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value \code{21}. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack \code{6}. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
+
+\subsubsection{Moving around}
+
+There are 7 instructions that can change the direction of the Program Counter: \code{>}, \code{v}, \code{<}, \code{\^}, \code{?}, \code{\_} and \code{|}. The first four should be thought of as arrows; they change the direction of the PC so that it moves in the direction indicated by these “arrows”. The questionmark symbol \code{?} randomizes the direction of the PC to one of four cardinal directions. The characters \code{\_} and \code{|} are conditionals; one value is popped off the stack the PC changes direction to West and North respectively if the value is non-zero, otherwise East and South, respectively.
+
+An example of the four basic move-instructions is shown in Figure \ref{fig:basicmove}. It makes use the the wrap-around property of the program space and never terminates, despite having a termination symbol in the center.
+
+\begin{figure}[!ht]
+\centering
+\code{< \^{}}\\
+\code{@}\\
+\code{v >}
+\caption{A never-ending Befunge program.}
+\label{fig:basicmove}
+\end{figure}
+
+Infinite loops are indeed easy to create; you simply force the PC in a path that loops back to where it started. A simple example is the program \code{><}, or, in fact, the empty Befunge program.
 
 \subsubsection{Input and output}
 
-empty
+Input can be asked for by \code{\&} for numerical values and \code{\~} for single-character inputs. Output is given by \code{.} and \code{,} for numeric and ASCII-characters respectively. The program \code{\~{}.@} asks for a character input and prints its numerical value before terminating.
+
+The program \code{\&:!\#@\_.} asks for numerical inputs and echoes whatever the user entered until the users enters \code{0}.
 
 \subsubsection{If-statements}
 
