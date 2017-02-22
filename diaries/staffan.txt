@@ -1,3 +1,8 @@
+2017-02-22
+
+- Fixed file extensions of Befunge programs (.bf -> .b93)
+- Documentation: 2 more examples and various small changes
+
 2017-02-20
 
 - Separated initialization of memory from function main to simplify future testing.

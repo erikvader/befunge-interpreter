@@ -13,7 +13,7 @@
 
 \title{Befunge-93 interpreter in Haskell\\
 \vspace{5pt}
-\small{A project for the course Program Design and Data Structures (1DL201)}}
+\small{A project for the course Program Design and Data Structures (1DL201) at Uppsala University}}
 \author{Staffan Annerwall, Patrik Johansson, Erik Rimskog}
 
 \begin{document}
@@ -84,6 +84,11 @@ $(0, 24)$ & $(1, 24)$ & $\cdots$ & $(79, 24)$\\
 \caption{A visualization of the program space in Befunge where each cell is labeled with its coordinates.}
 \label{fig:grid}
 \end{figure}
+
+\subsection{Notation and terminology}
+\label{sec:notation}
+
+When referring to the stack this document will use the notation $\langle a_n, \cdots, a_1 \rangle$ where $a_1$ is the top-most value of the stack.
 
 \subsection{Funge-98}
 \label{sec:funge98}
@@ -158,7 +163,7 @@ empty
 
 Addition (\code{+}), subtraction (\code{-}), multiplication (\code{*}), division (\code{/}) and modulo (\code{\%}) execute using Reverse Polish Notation (RPN). That is, the program \code{65-.} prints $1$ (and not $-1$). Divison by \code{0} pushes \code{0} back to the stack regardless of the value of the numerator.
 
-An example that utilizes all of these instructions is \code{329*+2*7/4\%.@}. It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like \code{18 3}, where the left-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value \code{21}. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack \code{6}. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
+An example that utilizes all of these instructions is \code{329*+2*7/4\%.@}. It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like $\langle 3, 18 \rangle$, where the right-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value \code{21}. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack \code{6}. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
 
 \subsubsection{Moving around}
 
@@ -179,15 +184,58 @@ Infinite loops are indeed easy to create; you simply force the PC in a path that
 
 \subsubsection{Input and output}
 
-Input can be asked for by \code{\&} for numerical values and \code{\~} for single-character inputs. Output is given by \code{.} and \code{,} for numeric and ASCII-characters respectively. The program \code{\~{}.@} asks for a character input and prints its numerical value before terminating.
+Input can be asked for by \code{\&} for numerical values and \code{\~} for single-character inputs. Output is given by \code{.} and \code{,} for numeric and ASCII-characters respectively. The program \code{\~{}.@} asks for a character input and prints its numerical value before terminating. The program \code{\&:!\#@\_.} asks for numerical inputs and echoes whatever the user entered until the users enters \code{0}.
 
-The program \code{\&:!\#@\_.} asks for numerical inputs and echoes whatever the user entered until the users enters \code{0}.
+When an input is asked for, the program pauses and “\code{>{}>}” is printed to the console to indicate that a value (or character) should be entered. After a value (or character) is entered, the program resumes. Should more than one value be entered, everything but the first value is ignored.
 
 \subsubsection{If-statements}
 
-empty
+If-statements can be used either horizontally using \code{\_} or vertically using \code{|}. Both instructions pop one value off the stack and instructs the PC to move West/North if the value is non-zero, and otherwise East/South.
+
+Discarding all values from the stack until a \code{0} is on top is hence very easy: \code{>\_@}. If a string is pushed onto the stack it is also easy to print it, as shown in Figure \ref{fig:print}.
+
+\begin{figure}[!ht]
+\centering
+\code{"egnufeB">:\#v\_@}\\
+\code{\hspace{3.5em}\^{} ,<}
+\caption{Printing a string in Befunge. The program prints \code{Befunge}. Note that the string is pushed reversely onto the stack.}
+\label{fig:print}
+\end{figure}
 
 \subsubsection{\code{p}utting and \code{g}etting values}
+
+Values from the program space can be retrieved using the get-command \code{g}; it pops the values \code{y} and \code{x} from the stack and pushes whichever character is at position $(\code{x}, \code{y})$. The put-instruction \code{p} pops \code{y} and \code{x} as well as a third value \code{v}, and then inserts \code{v} at position $(\code{x}, \code{y})$ in the program space.
+
+These instructions can make for particularly confusing code, for example the program \code{444**00p} (or equivalently \code{4::**0:p}) which at first glance does not seem to terminate. However, \code{444**} pushes 64 (ASCII character \code{@}) to the stack which is then put into the program space at position $(\code{0}, \code{0})$ by \code{00p}. The program then wraps around the right “edge” of the program space and appears at $(\code{0}, \code{0})$ where there is now a termination symbol, \code{@}, and hence does terminate.
+
+\subsubsection{Determining prime numbers}
+
+A more complicated example is one that takes a number and determines whether it is a prime number or not. One solution, designed to be obscure and hard to read, is shown in Figure \ref{fig:prime}.
+
+The very first row asks for a numeric input, say $n$, and outputs \code{0} (indicating “False”) if $n \leq 1$. The value is then compared to \code{3} on line two and if $n \leq 3$ (i.e. $n$ is either 2 or 3) then \code{1} (“True”) is printed. If $n > 3$ the PC now travels South in the left-most column. $r_2 = n \text{ mod } 2$ is calculated and if $r_2 = 0$ (meaning $n$ is an even number) then the program terminates after printing \code{0}.
+
+\begin{figure}[!ht]
+\centering
+\code{\&::1\`{}\#v\_0.@}\\
+\code{\hspace{-2em}v\_v\#\`{}3<}\\
+\code{\hspace{-2.5em}:\hspace{.5em}>1.@}\\
+\code{\hspace{-3em}2>p1v}\\
+\code{\hspace{-2em}\%:v2<\#<}\\
+\code{\hspace{-4em}\#0+}\\
+\code{\hspace{-4em}>\^{}:}\\
+\code{\hspace{-.5em}|>0\$\%\#\^{}\_  \$}\\
+\code{\hspace{-4em}\$\textbackslash:}\\
+\code{\hspace{-2em}.\^{}g:0:<}\\
+\code{@ >\textbackslash\`{}\#\^{}\_1.\$}
+\caption{A primality test in Befunge, designed to be obscure.}
+\label{fig:prime}
+\end{figure}
+
+If the program has not yet terminated we know that $n$ is an odd integer such that $n \geq 5$. The value $n$ is stored at position (0, 0) in the program space (replacing the initial \code{\&}-character) and then the main primality testing loop begins (at position (4, 4)) with a single value of \code{1} on the stack (pushed at position (3, 3)).
+
+When the loop starts it increments whatever is on the top of the stack by 2 and duplicates the new value, call it $k$. It then uses the \code{g}-command to get the value on position (0,0), i.e. the number $n$ we stored earlier. The two top-most values on the stack are swapped (the stack is now equal to $\langle k, n, k \rangle$) and a comparison $n > k$ is performed using the \code{\`{}}-character. If the comparison $n > k$ is false (i.e. $n \leq k$) then \code{1} is printed and the program terminates (after wrapped around to position (0, 10)).
+
+Otherwise, if $n > k$, then the program duplicates the stack's top value, pushes the stored $n$ again (using \code{g}) and swaps the stack's top elements (making the stack look like $\langle k, n, k \rangle$ again). We now calculate $n \text{ mod } k$ and terminate with a printed \code{0} if $n \equiv 0 \mod k$. Otherwise the PC goes back to the beginning of the loop and increments the top value of the stack by 2 again.
 
 \section{Implementation}
 \label{sec:impl}
@@ -210,7 +258,7 @@ The Befunge stack, defined in \code{BStack.hs}, is implemented using a list of i
 
 \vspace{6pt}
 \noindent
-\code{pop} (\code{BStack -> (BStack, Int)}) takes a stack \code{s} and returns a tuple \code{(s', t)} where \code{t} is the top element of \code{s} and \code{s'} is \code{s} with \code{t} removed. Should \code{s} be empty, a tuple \code{(BStack [\hspace{2pt}], 0)} is returned.
+\code{pop} (\code{BStack -> (BStack, Int)}) takes a stack \code{s} and returns a tuple \code{(s', t)} where \code{t} is the top element of \code{s} and \code{s'} is \code{s} with \code{t} removed. If \code{s} is empty, a tuple \code{(BStack [\hspace{2pt}], 0)} is returned instead.
 
 \vspace{6pt}
 \noindent
