@@ -25,33 +25,23 @@ main = do
   argv <- getArgs
 
   case F.parseFlags argv of
-     status | F.isDisplayHelp status -> putStrLn "du behöver hjälp!"
-            | F.isSyntaxError status -> putStrLn "du skrev fel! --help för hjälp"
+     status | F.isDisplayHelp status -> printHelpScreen
+            | F.isSyntaxError status -> putStrLn "Wrong use of arguments. --help for help"
             | otherwise              -> go (F.extractOptions status)
 
-
-{-let argc = length argv
-
-when (argc == 0) $ do
-  putStrLn "Missing argument filename, exiting" --displayhelp
-  exitFailure
-
-when (argc > 1) $
-  putStrLn "Too many arguments, ignoring..."
-
-let filename = head argv-}
 
 go :: F.Options -> IO ()
 go opts = do
    let debug = F.getFlag opts F.Debug False
-   let filename = F.getFlag opts F.Filename ""
+   let filename = F.getFlagString opts F.Filename
+   let input = F.getFlagString opts F.Input
 
    rawProgram <- readProgram filename debug
    let progLines = lines rawProgram
 
    (memory, stack, pc) <- initialize progLines
 
-   runProgram memory stack pc debug
+   runProgram memory stack pc debug input
 
 initialize :: [String] -> IO (BMemory, BS.BStack, BPC.BProgramCounter)
 initialize progLines = do
@@ -74,8 +64,8 @@ readProgram fname debug = do
       exitFailure) :: SomeException -> IO String)
 
 
-runProgram :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Bool -> IO ()
-runProgram mem stack pc debug = do
+runProgram :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Bool -> String -> IO ()
+runProgram mem stack pc debug input = do
   let (x, y) = BPC.getPosition pc
   char <- BM.getValue mem (x, y)
 
@@ -83,53 +73,80 @@ runProgram mem stack pc debug = do
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ")" ++ " counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
 
   unless (char == '@') $ do
-      (stack', pc') <- executeInstruction mem stack pc char
-      runProgram mem stack' (BPC.step pc') debug
+      (stack', pc', input') <- executeInstruction mem stack pc char input
+      runProgram mem stack' (BPC.step pc') debug input'
 
 
-executeInstruction :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Char -> IO (BS.BStack, BPC.BProgramCounter)
-executeInstruction mem stack pc char =
+executeInstruction :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Char -> String -> IO (BS.BStack, BPC.BProgramCounter, String)
+executeInstruction mem stack pc char input =
   case char of
-    '"' -> return (stack, BI.toggleStringMode pc)
-    c | BPC.isStringMode pc && isAscii c -> return (BS.push stack (ord c), pc)
-    d | isDigit d -> return (BI.pushStack stack (digitToInt d), pc)
-    '+' -> return (BI.add stack, pc)
-    '-' -> return (BI.subtract stack, pc)
-    '*' -> return (BI.multiply stack, pc)
-    '/' -> return (BI.divide stack, pc)
-    '%' -> return (BI.modulo stack, pc)
-    '!' -> return (BI.logicalNot stack, pc)
-    '`' -> return (BI.greaterThan stack, pc)
-    '^' -> return (stack, BPC.setDirection pc North)
-    '>' -> return (stack, BPC.setDirection pc East)
-    'v' -> return (stack, BPC.setDirection pc South)
-    '<' -> return (stack, BPC.setDirection pc West)
-    '_' -> return $ BI.ifHorizontal stack pc
-    '|' -> return $ BI.ifVertical stack pc
-    ':' -> return (BI.duplicate stack, pc)
-    '\\' -> return (BI.swap stack, pc)
-    '$' -> return (BI.discard stack, pc)
-    '#' -> return (stack, BPC.step pc)
+    '"' -> return (stack, BI.toggleStringMode pc, input)
+    c | BPC.isStringMode pc && isAscii c -> return (BS.push stack (ord c), pc, input)
+    d | isDigit d -> return (BI.pushStack stack (digitToInt d), pc, input)
+    '+' -> return (BI.add stack, pc, input)
+    '-' -> return (BI.subtract stack, pc, input)
+    '*' -> return (BI.multiply stack, pc, input)
+    '/' -> return (BI.divide stack, pc, input)
+    '%' -> return (BI.modulo stack, pc, input)
+    '!' -> return (BI.logicalNot stack, pc, input)
+    '`' -> return (BI.greaterThan stack, pc, input)
+    '^' -> return (stack, BPC.setDirection pc North, input)
+    '>' -> return (stack, BPC.setDirection pc East, input)
+    'v' -> return (stack, BPC.setDirection pc South, input)
+    '<' -> return (stack, BPC.setDirection pc West, input)
+    '_' -> do
+            let (stack', pc') = BI.ifHorizontal stack pc
+            return (stack', pc', input)
+    '|' -> do
+            let (stack', pc') = BI.ifVertical stack pc
+            return (stack', pc', input)
+    ':' -> return (BI.duplicate stack, pc, input)
+    '\\' -> return (BI.swap stack, pc, input)
+    '$' -> return (BI.discard stack, pc, input)
+    '#' -> return (stack, BPC.step pc, input)
     '?' -> do
             pc' <- BI.randomDir pc
-            return (stack, pc')
+            return (stack, pc', input)
     '.' -> do
             stack' <- BI.printInt stack
-            return (stack', pc)
+            return (stack', pc, input)
     ',' -> do
             stack' <- BI.printAscii stack
-            return (stack', pc)
+            return (stack', pc, input)
     '&' -> do
-            stack' <- BI.readInt stack []
-            return (stack', pc)
+            (stack', input') <- BI.readInt stack input
+            return (stack', pc, input')
     '~' -> do
-            stack' <- BI.readASCII stack []
-            return (stack', pc)
+            (stack', input') <- BI.readASCII stack input
+            return (stack', pc, input')
     'g' -> do
             stack' <- BI.getASCII mem stack
-            return (stack', pc)
+            return (stack', pc, input)
     'p' -> do
             stack' <- BI.putASCII mem stack
-            return (stack', pc)
+            return (stack', pc, input)
 
-    _ -> return (stack, pc)
+    _ -> return (stack, pc, input)
+
+printHelpScreen :: IO ()
+printHelpScreen = do
+   putStrLn "Befunge-93 Interpreter in Haskell!"
+   putStrLn "Execute a befunge program in the command line!"
+   putStrLn ""
+   putStrLn "use: Main [-options] filename"
+   putStrLn "\'filename\' is a path to a text file with befunge code in it."
+   putStrLn ""
+   putStrLn "Options:"
+   putStrLn "   ?, -h, --help             <-> Displays this help screen"
+   putStrLn "   -d, --debug               <-> Enables debug mode. Prints every step in the execution"
+   putStrLn "   -i string, --input string <-> preloads a buffer from \'string\' as input for the program"
+   putStrLn ""
+   putStrLn "Example:"
+   putStrLn "   Main foo.txt                       -- Runs the program in foo.txt"
+   putStrLn "   Main -d foo.txt                    -- will also print every step the cursor is taking"
+   putStrLn "   Main -i \"some input  \" foo.txt     -- will also give the program a preloaded input buffer"
+   putStrLn "   Main -d -i \"hello world\" foo.txt   -- does both of the above"
+   putStrLn ""
+   putStrLn "If the befunge program needs input from the buffer but it is empty, it will prompt the user for more buffer."
+   putStrLn ""
+   putStrLn "For Befunge-93 specifics, search on bing."

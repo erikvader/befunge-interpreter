@@ -39,3 +39,11 @@ Today I implemented the last two instruction-thingies, p and g. It took me about
 one hour. The essentials of the program are therefore done, so only function definitions
 and extra features are left. If we have time we consider adding flags so you
 can change the behaviour of the program without changing the source code.
+
+# 22/2 - 2017
+Today I implemented flags so you can give the program options. It took me about
+5 hours to do and i hope that everything i working as it should. I also took
+the time to write a help screen for the program. If you add the flag --help
+it will print out this screen. There it explains all program specific things
+that a user needs to know.
+Now there is only the boring things left, documentation and testing.

@@ -51,8 +51,8 @@ swap             :: BS.BStack -> BS.BStack
 discard          :: BS.BStack -> BS.BStack
 printInt         :: BS.BStack -> IO BS.BStack
 printAscii       :: BS.BStack -> IO BS.BStack
-readInt          :: BS.BStack -> String -> IO BS.BStack
-readASCII        :: BS.BStack -> String -> IO BS.BStack
+readInt          :: BS.BStack -> String -> IO (BS.BStack, String)
+readASCII        :: BS.BStack -> String -> IO (BS.BStack, String)
 toggleStringMode :: BPC.BProgramCounter -> BPC.BProgramCounter
 getASCII         :: BMemory -> BS.BStack -> IO BS.BStack
 putASCII         :: BMemory -> BS.BStack -> IO BS.BStack
@@ -152,17 +152,23 @@ printAscii stack = do
   return stack'
 
 readInt stack input = do
-   char <- readFromInput input
-   if null char
-      then return stack
-      else return $ BS.push stack (read (firstWord char) :: Int)
-   where firstWord s = head $ words s
+   chars <- readFromInput (trim input)
+   if null chars
+      then return (stack, "")
+      else let (hd, tl) = firstWord chars "" in return (BS.push stack (read hd :: Int), tl)
+   where
+      firstWord [] acc = (reverse acc, "")
+      firstWord (' ':ss) acc = (reverse acc, ss)
+      firstWord (s:ss) acc = firstWord ss (s:acc)
+
+      trim (' ':ss) = trim ss
+      trim ss = ss
 
 readASCII stack input = do
-   char <- readFromInput input
-   if null char
-      then return stack
-      else return $ BS.push stack (ord (head char))
+   chars <- readFromInput input
+   if null chars
+      then return (stack, "")
+      else return (BS.push stack (ord (head chars)), tail chars)
 
 --tar en inputsträng, om den är tom ber den användaren att skriva in ngt
 readFromInput :: String -> IO String
