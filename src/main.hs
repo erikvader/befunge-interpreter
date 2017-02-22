@@ -29,6 +29,8 @@ main = do
             | F.isSyntaxError status -> putStrLn "Wrong use of arguments. --help for help"
             | otherwise              -> go (F.extractOptions status)
 
+  putStrLn ""
+
 
 go :: F.Options -> IO ()
 go opts = do
@@ -70,8 +72,8 @@ runProgram mem stack pc debug input = do
   char <- BM.getValue mem (x, y)
 
   when debug $
-    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ")" ++ " counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
-
+    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ") " ++ show stack
+--" counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
   unless (char == '@') $ do
       (stack', pc', input') <- executeInstruction mem stack pc char input
       runProgram mem stack' (BPC.step pc') debug input'

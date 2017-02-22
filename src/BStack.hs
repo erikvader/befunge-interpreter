@@ -13,8 +13,10 @@ top :: BStack -> Int
 -- implementation
 --------------------------------------------------------------------------------
 
-newtype BStack = BStack [Int] deriving (Show)
+newtype BStack = BStack [Int]
 
+instance Show BStack where
+   show (BStack s) = "Stack: "++ show (reverse s)
 
 empty = BStack []
 
