@@ -43,9 +43,9 @@ divide           :: BS.BStack -> BS.BStack
 modulo           :: BS.BStack -> BS.BStack
 logicalNot       :: BS.BStack -> BS.BStack
 greaterThan      :: BS.BStack -> BS.BStack
-randomDir        :: BProgramCounter -> IO BProgramCounter
-ifHorizontal     :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
-ifVertical       :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
+randomDir        :: BPC.BProgramCounter -> IO BPC.BProgramCounter
+ifHorizontal     :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
+ifVertical       :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
 duplicate        :: BS.BStack -> BS.BStack
 swap             :: BS.BStack -> BS.BStack
 discard          :: BS.BStack -> BS.BStack
@@ -53,7 +53,7 @@ printInt         :: BS.BStack -> IO BS.BStack
 printAscii       :: BS.BStack -> IO BS.BStack
 readInt          :: BS.BStack -> String -> IO BS.BStack
 readASCII        :: BS.BStack -> String -> IO BS.BStack
-toggleStringMode :: BProgramCounter -> BProgramCounter
+toggleStringMode :: BPC.BProgramCounter -> BPC.BProgramCounter
 getASCII         :: BMemory -> BS.BStack -> IO BS.BStack
 putASCII         :: BMemory -> BS.BStack -> IO BS.BStack
 

@@ -1,4 +1,4 @@
-module BProgramCounter (starting, reverse, step, getPosition, setPosition, setDirection, getDirection, isStringMode, setStringMode) where
+module BProgramCounter (BProgramCounter, starting, reverse, step, getPosition, setPosition, setDirection, getDirection, isStringMode, setStringMode) where
 
 import Prelude hiding (reverse)
 import Types
@@ -20,6 +20,8 @@ setStringMode :: BProgramCounter -> StringMode -> BProgramCounter
 --------------------------------------------------------------------------------
 -- implementation
 --------------------------------------------------------------------------------
+
+newtype BProgramCounter = PC (Position, Direction, StringMode) deriving (Show)
 
 starting = PC ((0, 0), East, False)
 

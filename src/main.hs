@@ -10,38 +10,50 @@ import qualified BStack as BS
 import qualified BMemory as BM
 import qualified BProgramCounter as BPC
 import qualified BInstructions as BI
+import qualified Flags as F
 import Types
 
 ----------------------------------------
 ----------------------------------------
-_DEBUG :: Bool
-_DEBUG = True
+--_DEBUG :: Bool
+--_DEBUG = True
 
 ----------------------------------------
 
 main :: IO ()
 main = do
   argv <- getArgs
-  let argc = length argv
 
-  when (argc == 0) $ do
-    putStrLn "Missing argument filename, exiting"
-    exitFailure
-
-  when (argc > 1) $
-    putStrLn "Too many arguments, ignoring..."
-
-  let filename = head argv
-
-  rawProgram <- readProgram filename
-  let progLines = lines rawProgram
-
-  (memory, stack, pc) <- initialize progLines
-
-  runProgram memory stack pc
+  case F.parseFlags argv of
+     status | F.isDisplayHelp status -> putStrLn "du behöver hjälp!"
+            | F.isSyntaxError status -> putStrLn "du skrev fel! --help för hjälp"
+            | otherwise              -> go (F.extractOptions status)
 
 
-initialize :: [String] -> IO (BMemory, BS.BStack, BProgramCounter)
+{-let argc = length argv
+
+when (argc == 0) $ do
+  putStrLn "Missing argument filename, exiting" --displayhelp
+  exitFailure
+
+when (argc > 1) $
+  putStrLn "Too many arguments, ignoring..."
+
+let filename = head argv-}
+
+go :: F.Options -> IO ()
+go opts = do
+   let debug = F.getFlag opts F.Debug False
+   let filename = F.getFlag opts F.Filename ""
+
+   rawProgram <- readProgram filename debug
+   let progLines = lines rawProgram
+
+   (memory, stack, pc) <- initialize progLines
+
+   runProgram memory stack pc debug
+
+initialize :: [String] -> IO (BMemory, BS.BStack, BPC.BProgramCounter)
 initialize progLines = do
   memory <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO BMemory
   BM.buildMemory memory progLines
@@ -49,9 +61,9 @@ initialize progLines = do
   return (memory, BS.empty, BPC.starting)
 
 
-readProgram :: String -> IO String
-readProgram fname = do
-  when _DEBUG $
+readProgram :: String -> Bool -> IO String
+readProgram fname debug = do
+  when debug $
     putStrLn $ "DEBUG: Reading file \"" ++ fname ++ "\"..."
 
   catch (do
@@ -62,20 +74,20 @@ readProgram fname = do
       exitFailure) :: SomeException -> IO String)
 
 
-runProgram :: BM.BMemory -> BS.BStack -> BProgramCounter -> IO ()
-runProgram mem stack pc = do
+runProgram :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Bool -> IO ()
+runProgram mem stack pc debug = do
   let (x, y) = BPC.getPosition pc
   char <- BM.getValue mem (x, y)
 
-  when _DEBUG $
+  when debug $
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ")" ++ " counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
 
   unless (char == '@') $ do
       (stack', pc') <- executeInstruction mem stack pc char
-      runProgram mem stack' (BPC.step pc')
+      runProgram mem stack' (BPC.step pc') debug
 
 
-executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> Char -> IO (BS.BStack, BProgramCounter)
+executeInstruction :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Char -> IO (BS.BStack, BPC.BProgramCounter)
 executeInstruction mem stack pc char =
   case char of
     '"' -> return (stack, BI.toggleStringMode pc)
