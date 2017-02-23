@@ -1,0 +1,298 @@
+commit edf0077a9e86b613e4859ba9677ffeb9d2cd1970
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Thu Feb 23 14:50:38 2017 +0100
+
+    Tweak documentation structure
+
+commit 2649b3ea9f36f5dc5f79d310cffe1b92fe9433df
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Thu Feb 23 13:28:38 2017 +0100
+
+    Give example programs a prefix ex_
+
+commit 8013c817293780b9d4c67ab1bac6e34519f9e244
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 22 15:40:52 2017 +0100
+
+    Format diary
+
+commit 32e9875fd01e664b8256eeeab66729872bc62edd
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 22 15:39:48 2017 +0100
+
+    More examples to documentation
+
+commit 4afe9c274dca260822e99955d4254de207aeb107
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 22 14:07:23 2017 +0100
+
+    Fix extension of befunge source files (.bf -> .b93)
+
+commit 86805c8485a98027ec47d788016b5f3724882970
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Tue Feb 21 21:46:21 2017 +0100
+
+    Added p and g
+
+commit e8c6e276a524196b8c9fd254891cb96252f05155
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Tue Feb 21 15:06:45 2017 +0100
+
+    More examples
+
+commit 7f7e77b2b12fffb0b31e17735a5da8a011cfb897
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 20 20:26:08 2017 +0100
+
+    More work on documentation: description of funge space and add first example
+
+commit a852f525972a9a0b040a0202c6ff86c0b302e1b5
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Mon Feb 20 18:41:54 2017 +0100
+
+    Added flushes after putStr
+
+commit ca272bda6d3ef2ea5250e8a150a6691359e96037
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 20 18:03:47 2017 +0100
+
+    Separate initialization of memory from function main to simplify future testing.
+
+commit e015d37232591ab8febb17eb8ac3d295774acc99
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Sun Feb 19 18:31:50 2017 +0100
+
+    readAscii and readInt no longer throws an exception if input is empty
+
+commit ee036ff57d850741bdaa8d38fc0e12931e0a3157
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Sun Feb 19 18:07:50 2017 +0100
+
+    Fixed hlint and ghc-mod warnings
+
+commit 754595dd2cc358fed9b4aaa4cd28ac2417660c4a
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Sun Feb 19 17:54:57 2017 +0100
+
+    Add instruction list to documentation
+
+commit 7063f61803102a08a7495b3fb38f644c4578bdc4
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Sun Feb 19 17:33:41 2017 +0100
+
+    Fixed compilation errors from previous commit
+
+commit 480c8036cdd393842d0f795d9d36d0a540efc2c3
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Sun Feb 19 17:16:20 2017 +0100
+
+    Fixed a bug in the ordering in executeInstruction
+
+commit b25dafa64a2fa05593e87e7bfa0cc232e8f1cda8
+Merge: a25ff22 ab1c779
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Sun Feb 19 17:01:35 2017 +0100
+
+    Merge branch 'fixEriksIO'
+
+commit a25ff226c539baab5949a23060aa55fc92ff1e5c
+Merge: ebe6e43 af1ad3f
+Author: Patrik Johansson <Patrik.Viby@gmail.com>
+Date:   Sun Feb 19 16:16:11 2017 +0100
+
+    mergeing local master with github master
+
+commit af1ad3fb8ea3070fd24d5069a6f5897265b20471
+Author: SK-GreatGrey <Patrik.viby@gmail.com>
+Date:   Sun Feb 19 15:53:29 2017 +0100
+
+    Update patrik.txt
+
+commit ab1c7799ef9e44ba54670ef18ccdbdb4a5899f7e
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Sun Feb 19 15:49:03 2017 +0100
+
+    Added stringMode and fixed a bug in readInt
+
+commit ebe6e43bb7d619da5ecf438e52a670f9aafe0ad5
+Author: Patrik Johansson <Patrik.Viby@gmail.com>
+Date:   Sun Feb 19 15:19:19 2017 +0100
+
+    added more functions. Also rearanged functions in accordance with the documentation
+
+commit 1b01229e7d2f59c821b4a37b5084858462ea7bff
+Author: SK-GreatGrey <Patrik.viby@gmail.com>
+Date:   Sun Feb 19 13:58:28 2017 +0100
+
+    Update patrik.txt
+
+commit 45e8bb1d9ac54beb4e9b1c494ffdfe8f6eb79fd1
+Merge: 3b08d17 5f7e2fd
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Sat Feb 18 15:03:34 2017 +0100
+
+    Merging in & ? and ~
+
+commit 5f7e2fdc980cf80c774ec4ef108457620063d3e5
+Merge: 584efd1 3b08d17
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Sat Feb 18 14:59:21 2017 +0100
+
+    Merge branch 'master' into IO_for_real
+
+commit 3b08d174e7c7b935b1972f0284bab115631aa1c0
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Sat Feb 18 14:04:37 2017 +0100
+
+    Update diary
+
+commit eb53e1473b7361eab6b596ce5e126ceefa9af83e
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Sat Feb 18 14:03:11 2017 +0100
+
+    Begin documentation
+
+commit 8cf528783c5e997a8821a3249dccc77dac7c272d
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Sat Feb 18 09:05:19 2017 +0100
+
+    Improve bounds checking in BMemory.hs
+
+commit 584efd146f256f0da0760bf2759fd0778017d1a8
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Fri Feb 17 20:18:28 2017 +0100
+
+    Diary for Erik
+
+commit ec73df11b5431d98205ad9f341bec64a73d7c1e7
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Fri Feb 17 20:10:54 2017 +0100
+
+    Added &?~ and alot of small structural changes
+
+commit d84f4eb7f126fed93bd773ff9968e6715004e3e3
+Author: Patrik Johansson <Patrik.Viby@gmail.com>
+Date:   Fri Feb 17 13:46:39 2017 +0100
+
+    Implemented more commands, all muppets present
+
+commit ea1ce403e32561bab6beaa79357466e1a1e5a913
+Author: Patrik Johansson <Patrik.Viby@gmail.com>
+Date:   Fri Feb 17 11:17:00 2017 +0100
+
+    Diary entry for Patrik
+
+commit 30d7d8982c957c944f956d9f3120ca18da047698
+Author: Patrik Johansson <Patrik.Viby@gmail.com>
+Date:   Fri Feb 17 11:10:03 2017 +0100
+
+    Fixed logical error & added height / width constraint
+
+commit d186a400f9c8cf85f59212461c83b505e75955cb
+Merge: 6bef34b c5c78a1
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Thu Feb 16 20:41:21 2017 +0100
+
+    Merge branch 'implement-commands'
+    
+    Entry 16/2 - 2017 in Erik's diary explains all changes made in this commit.
+
+commit 6bef34b9dd2f6c7042bae57de071f3d1d6f2da16
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Wed Feb 15 20:24:54 2017 +0100
+
+    Fixed compilation errors from merge with eriksIO
+
+commit ff1caf4900d5a4d7473a41059f8f40fb2b1deb23
+Merge: 3eacd15 c6ed7e4
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Wed Feb 15 20:19:33 2017 +0100
+
+    Merge pull request #1 from Program-Design-and-Datastructures/eriksIO
+    
+    Eriks io
+
+commit c6ed7e4ebc2452d76f8bb1c6a49f71a930815ce6
+Merge: f31da57 3eacd15
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Wed Feb 15 20:18:35 2017 +0100
+
+    Merge branch 'master' into eriksIO
+
+commit f31da57645652987f1bf32c17376a911eabf1e76
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Wed Feb 15 19:33:48 2017 +0100
+
+    Wrote Erik's diary for 15/2
+
+commit 49624d6dbb1a33f7bc54bd99c8b0e0be9a9388c9
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Wed Feb 15 19:23:32 2017 +0100
+
+    Added names for modules and added wrap-around on step
+
+commit c5c78a13b1b2093de3f59ba80d8ec176e0aa895a
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 19:13:42 2017 +0100
+
+    Continue undo renaming of PC and continue adding instructions
+
+commit 5fceaa29a54567e76376d36698ea193fbc495a85
+Author: erikvader <erik.rimskog@gmail.com>
+Date:   Wed Feb 15 19:08:11 2017 +0100
+
+    Separated common data and type to Types.hs
+
+commit ad736e06c30d5b30e61298936e3534beac9f788c
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 18:43:14 2017 +0100
+
+    Undo renaming of PC and begin adding instructions
+
+commit 3eacd15309d35891d1977e4e92c3ac6ac988f82b
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 18:18:36 2017 +0100
+
+    Separate instruction pointer from main and clean up
+
+commit bada01e29b044b4bfe6270167b6aca3afaedf856
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 15:55:49 2017 +0100
+
+    Add diary entry for initial commit
+
+commit 5e88ca51d2499f6b36a2ee4e332f733e6ed71057
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 12:43:00 2017 +0100
+
+    fix compilation error in main.hs
+
+commit 578343182e7f581edc88aca2f47f17f82280159a
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 12:33:19 2017 +0100
+
+    fix for previous commit (hopefully)
+
+commit bcbbd06f58e7abad99e1397690294f064a6dc454
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 12:31:55 2017 +0100
+
+    add structure and diaries
+
+commit 453055fc79163a3dc13b6e923540a90a67e2efc6
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Wed Feb 15 12:22:32 2017 +0100
+
+    Initial commit
+
+commit f2c5586071acb2a888f0ce34569744b12c6ca8ee
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Fri Feb 10 20:44:52 2017 +0100
+
+    Created empty diary
+
+commit 74f6b736f6825ade6050dcb610fb6910137f10fc
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Thu Feb 9 17:38:19 2017 +0100
+
+    Initial commit
