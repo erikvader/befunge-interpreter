@@ -19,15 +19,21 @@ import System.Console.ANSI
 
 main :: IO ()
 main = do
+  argv <- getArgs
 
-   argv <- getArgs
   case F.parseFlags argv of
      status | F.isDisplayHelp status -> printHelpScreen
-            | F.isSyntaxError status -> putStrLn "Wrong use of arguments. Use --help for help"
+            | F.isSyntaxError status -> printFlagError status
             | otherwise              -> go (F.extractOptions status)
 
   putStrLn ""
 
+printFlagError :: F.FlagStatus -> IO ()
+printFlagError sta = do
+   setSGR [SetColor Foreground Vivid Red]
+   putStrLn "Invalid flag usage! use --help for help"
+   putStrLn ("error: " ++ F.extractError sta)
+   setSGR [Reset]
 
 go :: F.Options -> IO ()
 go opts = do
@@ -59,7 +65,9 @@ readProgram fname debug = do
     contents <- readFile fname
     evaluate contents)
     ((\_ -> do
+      setSGR [SetColor Foreground Vivid Red]
       putStrLn $ "Couldn't read file \"" ++ fname ++ "\", exiting..."
+      setSGR [Reset]
       exitFailure) :: SomeException -> IO String)
 
 
@@ -68,9 +76,12 @@ runProgram mem stack pc debug input = do
   let (x, y) = BPC.getPosition pc
   char <- BM.getValue mem (x, y)
 
-  when debug $
+  when debug $ do
+    setSGR [SetColor Foreground Vivid Green]
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ") " ++ show stack
---" counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
+    setSGR [Reset]
+    --" counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
+
   unless (char == '@' && not (BPC.isStringMode pc)) $ do
       (stack', pc', input') <- executeInstruction mem stack pc char input
       runProgram mem stack' (BPC.step pc') debug input'

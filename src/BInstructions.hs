@@ -25,6 +25,7 @@ import System.IO
 import Data.Char
 import System.Random
 import Prelude hiding (subtract)
+import System.Console.ANSI
 
 import qualified BStack as BS
 import qualified BProgramCounter as BPC
@@ -152,7 +153,7 @@ printAscii stack = do
   return stack'
 
 readInt stack input = do
-   chars <- readFromInput (trim input)
+   chars <- readFromInput (trim input) "Integer"
    if null chars
       then return (stack, "")
       else let (hd, tl) = firstWord chars "" in return (BS.push stack (read hd :: Int), tl)
@@ -165,18 +166,24 @@ readInt stack input = do
       trim ss = ss
 
 readASCII stack input = do
-   chars <- readFromInput input
+   chars <- readFromInput input "ASCII"
    if null chars
       then return (stack, "")
       else return (BS.push stack (ord (head chars)), tail chars)
 
 --tar en inputsträng, om den är tom ber den användaren att skriva in ngt
-readFromInput :: String -> IO String
-readFromInput [] = do
-   putStr ">>"
+readFromInput :: String -> String -> IO String
+readFromInput [] prefix = do
+   putStrLn ""
+   setSGR [SetColor Foreground Vivid Blue]
+   putStr (prefix ++ ">>")
    hFlush stdout
-   getLine
-readFromInput input = return input
+   inp <- getLine
+   cursorUpLine 1
+   clearFromCursorToScreenEnd
+   setSGR [Reset]
+   return inp
+readFromInput input _ = return input
 
 toggleStringMode pc = BPC.setStringMode pc (not (BPC.isStringMode pc))
 
