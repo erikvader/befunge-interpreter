@@ -54,8 +54,8 @@ printAscii       :: BS.BStack -> IO BS.BStack
 readInt          :: BS.BStack -> String -> IO (BS.BStack, String)
 readASCII        :: BS.BStack -> String -> IO (BS.BStack, String)
 toggleStringMode :: BPC.BProgramCounter -> BPC.BProgramCounter
-getASCII         :: BMemory -> BS.BStack -> IO BS.BStack
-putASCII         :: BMemory -> BS.BStack -> IO BS.BStack
+getASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
+putASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
 
 --------------------------------------------------------------------------------
 -- implementation

@@ -12,21 +12,18 @@ import qualified BProgramCounter as BPC
 import qualified BInstructions as BI
 import qualified Flags as F
 import Types
+import System.Console.ANSI
 
 ----------------------------------------
-----------------------------------------
---_DEBUG :: Bool
---_DEBUG = True
-
 ----------------------------------------
 
 main :: IO ()
 main = do
-  argv <- getArgs
 
+   argv <- getArgs
   case F.parseFlags argv of
      status | F.isDisplayHelp status -> printHelpScreen
-            | F.isSyntaxError status -> putStrLn "Wrong use of arguments. --help for help"
+            | F.isSyntaxError status -> putStrLn "Wrong use of arguments. Use --help for help"
             | otherwise              -> go (F.extractOptions status)
 
   putStrLn ""
@@ -45,9 +42,9 @@ go opts = do
 
    runProgram memory stack pc debug input
 
-initialize :: [String] -> IO (BMemory, BS.BStack, BPC.BProgramCounter)
+initialize :: [String] -> IO (BM.BMemory, BS.BStack, BPC.BProgramCounter)
 initialize progLines = do
-  memory <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO BMemory
+  memory <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO BM.BMemory
   BM.buildMemory memory progLines
 
   return (memory, BS.empty, BPC.starting)
@@ -74,7 +71,7 @@ runProgram mem stack pc debug input = do
   when debug $
     putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ") " ++ show stack
 --" counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
-  unless (char == '@') $ do
+  unless (char == '@' && not (BPC.isStringMode pc)) $ do
       (stack', pc', input') <- executeInstruction mem stack pc char input
       runProgram mem stack' (BPC.step pc') debug input'
 
@@ -144,11 +141,11 @@ printHelpScreen = do
    putStrLn "   -i string, --input string <-> preloads a buffer from \'string\' as input for the program"
    putStrLn ""
    putStrLn "Example:"
-   putStrLn "   Main foo.txt                       -- Runs the program in foo.txt"
-   putStrLn "   Main -d foo.txt                    -- will also print every step the cursor is taking"
-   putStrLn "   Main -i \"some input  \" foo.txt     -- will also give the program a preloaded input buffer"
-   putStrLn "   Main -d -i \"hello world\" foo.txt   -- does both of the above"
+   putStrLn "   Main foo.bf93                       -- Runs the program in foo.txt"
+   putStrLn "   Main -d foo.bf93                    -- will also print every step the cursor is taking"
+   putStrLn "   Main -i \"some input  \" foo.bf93     -- will also give the program a preloaded input buffer"
+   putStrLn "   Main -d -i \"hello world\" foo.bf93   -- does both of the above"
    putStrLn ""
    putStrLn "If the befunge program needs input from the buffer but it is empty, it will prompt the user for more buffer."
    putStrLn ""
-   putStrLn "For Befunge-93 specifics, search on bing."
+   putStrLn "For Befunge-93 specifics, search on google."
