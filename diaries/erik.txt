@@ -47,3 +47,19 @@ the time to write a help screen for the program. If you add the flag --help
 it will print out this screen. There it explains all program specific things
 that a user needs to know.
 Now there is only the boring things left, documentation and testing.
+
+# 23/2 - 2017
+Today I did a couple of things. The first thing I did was to fix a bug Patrik
+discovered. The bug was that when the program was in stringMode and read a @
+it exited instead of putting @ on the stack.
+The other thing I did today was to add colors to the output of the program. I also
+spent way too much time on trying to get the input prompt (>>) to disappear after
+an input was given. I got it to work mostly as I wanted it to. It splits the output
+into several lines and adds an extra newline if the cursor was on the beginning
+of a line, not perfect but good enough.
+I also tried to add parameters to change the width and the height of the array
+on the command line (so they are not just hardcoded). But I stopped halfway
+through because I noticed how annoying it would be to add that functionality.
+I would have to give MANY functions two additional arguments that they would
+rarely use. So I felt that it was too annoying and would make the code look too
+ugly, so I just gave up.

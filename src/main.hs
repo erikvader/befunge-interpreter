@@ -20,14 +20,18 @@ import System.Console.ANSI
 main :: IO ()
 main = do
 
-   argv <- getArgs
+  argv <- getArgs
   case F.parseFlags argv of
      status | F.isDisplayHelp status -> printHelpScreen
-            | F.isSyntaxError status -> putStrLn "Wrong use of arguments. Use --help for help"
+            | F.isSyntaxError status -> printFlagError status
             | otherwise              -> go (F.extractOptions status)
 
   putStrLn ""
 
+printFlagError :: F.FlagStatus -> IO ()
+printFlagError sta = do
+   putStrLn "Wrong use of arguments! use --help for help"
+   putStrLn ("error: " ++ F.extractError sta)
 
 go :: F.Options -> IO ()
 go opts = do
