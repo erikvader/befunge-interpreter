@@ -20,14 +20,11 @@ instance Show BStack where
 
 empty = BStack []
 
-
---push bs@(BStack []) 0 = bs
+push bs@(BStack []) 0 = bs
 push (BStack bstack) val = BStack (val : bstack)
-
 
 pop (BStack []) = (BStack [], 0)
 pop (BStack (hd:tl)) = (BStack tl, hd)
-
 
 top (BStack []) = 0
 top (BStack (hd:_)) = hd

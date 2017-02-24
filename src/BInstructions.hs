@@ -51,8 +51,8 @@ swap             :: BS.BStack -> BS.BStack
 discard          :: BS.BStack -> BS.BStack
 printInt         :: BS.BStack -> IO BS.BStack
 printAscii       :: BS.BStack -> IO BS.BStack
-readInt          :: BS.BStack -> String -> IO (BS.BStack, String)
-readASCII        :: BS.BStack -> String -> IO (BS.BStack, String)
+readInt          :: BS.BStack -> IO BS.BStack
+readASCII        :: BS.BStack -> IO BS.BStack
 toggleStringMode :: BPC.BProgramCounter -> BPC.BProgramCounter
 getASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
 putASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
@@ -151,32 +151,32 @@ printAscii stack = do
   hFlush stdout
   return stack'
 
-readInt stack input = do
-   chars <- readFromInput (trim input)
-   if null chars
-      then return (stack, "")
-      else let (hd, tl) = firstWord chars "" in return (BS.push stack (read hd :: Int), tl)
+readInt stack = do
+   chars <- readFromInput "Int"
+   if not (isInteger chars)
+      then return $ BS.push stack 0
+      else return $ BS.push stack (read chars :: Int)
    where
-      firstWord [] acc = (reverse acc, "")
-      firstWord (' ':ss) acc = (reverse acc, ss)
-      firstWord (s:ss) acc = firstWord ss (s:acc)
+      isInteger :: String -> Bool
+      isInteger []     = False
+      isInteger ('-':ss) = onlyDigits ss
+      isInteger ss = onlyDigits ss
 
-      trim (' ':ss) = trim ss
-      trim ss = ss
+      onlyDigits :: String -> Bool
+      onlyDigits [] = False
+      onlyDigits s  = foldl (\b h -> b && isDigit h) True s
 
-readASCII stack input = do
-   chars <- readFromInput input
+readASCII stack = do
+   chars <- readFromInput "Char"
    if null chars
-      then return (stack, "")
-      else return (BS.push stack (ord (head chars)), tail chars)
+      then return $ BS.push stack 0
+      else return $ BS.push stack (ord (head chars))
 
---tar en inputsträng, om den är tom ber den användaren att skriva in ngt
 readFromInput :: String -> IO String
-readFromInput [] = do
-   putStr ">>"
+readFromInput prefix = do
+   putStr (prefix ++ ">>")
    hFlush stdout
    getLine
-readFromInput input = return input
 
 toggleStringMode pc = BPC.setStringMode pc (not (BPC.isStringMode pc))
 

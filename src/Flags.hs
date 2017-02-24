@@ -1,6 +1,6 @@
 module Flags(
    Options,
-   Flag(Debug, Help, Filename, Input, Width, Height),
+   Flag(Debug, Help, Filename {- , Input, Width, Height -} ),
    FlagStatus,
    parseFlags,
    getFlag,
@@ -12,9 +12,8 @@ module Flags(
 
 import qualified Data.HashMap.Strict as HM
 import Data.Hashable
-import Data.Char
 
-data Flag = Debug | Help | Filename | Input | Width | Height deriving (Show, Eq)
+data Flag = Debug | Help | Filename {-| Input | Width | Height-} deriving (Show, Eq)
 type Options = HM.HashMap Flag String
 data FlagStatus = NoError Options | DisplayHelp | SyntaxError String
 
@@ -27,10 +26,10 @@ getFlagFromString "--debug"  = Just Debug
 getFlagFromString "--help"   = Just Help
 getFlagFromString "-h"       = Just Help
 getFlagFromString "?"        = Just Help
-getFlagFromString "-i"       = Just Input
-getFlagFromString "--input"  = Just Input
-getFlagFromString "--width"  = Just Width
-getFlagFromString "--height" = Just Height
+--getFlagFromString "-i"       = Just Input
+--getFlagFromString "--input"  = Just Input
+--getFlagFromString "--width"  = Just Width
+--getFlagFromString "--height" = Just Height
 getFlagFromString _          = Nothing
 
 parseFlags :: [String] -> FlagStatus
@@ -41,18 +40,21 @@ parse :: [String] -> Options -> FlagStatus
 parse [] opt = NoError opt
 parse (s:ss) opt =
    case getFlagFromString s of
-      (Just Height)     -> parseInt ss opt Height
-      (Just Width)      -> parseInt ss opt Width
+      --(Just Height)     -> parseInt ss opt Height
+      --(Just Width)      -> parseInt ss opt Width
       (Just Debug)      -> parse ss (HM.insert Debug "True" opt)
       (Just Help)       -> DisplayHelp
-      (Just Input)      -> parseString ss opt Input
+      --(Just Input)      -> parseString ss opt Input
       Nothing | null ss -> parse ss (HM.insert Filename s opt)
       Nothing           -> SyntaxError ("'"++ s ++ "'" ++ " is not a valid flag")
+      _                 -> error "something wierd happened in parse"
 
+{-
 parseString :: [String] -> Options -> Flag -> FlagStatus
 parseString [] _ f       = SyntaxError ("'" ++ show f ++ "' is missing an argument")
 parseString (s:ss) opt f = parse ss (HM.insert f s opt)
-
+-}
+{-
 parseInt :: [String] -> Options -> Flag -> FlagStatus
 parseInt [] opt f = SyntaxError ("'" ++ show f ++ "' is missing an argument")
 parseInt (s:ss) opt f
@@ -62,6 +64,7 @@ parseInt (s:ss) opt f
 isInteger :: String -> Bool
 isInteger []     = True
 isInteger (s:ss) = isDigit s && isInteger ss
+-}
 
 getFlag :: (Read v) => Options -> Flag -> v -> v
 getFlag opt f def =
@@ -85,6 +88,8 @@ isSyntaxError _               = False
 
 extractOptions :: FlagStatus -> Options
 extractOptions (NoError x) = x
+extractOptions _           = error "extractOptions only works with NoError constructor"
 
 extractError :: FlagStatus -> String
 extractError (SyntaxError x) = x
+extractError _           = error "extractOptions only works with SyntaxError constructor"
