@@ -1,3 +1,62 @@
+commit c4a703bcb4ba3395f3239f5ae59b262d89ce9169
+Merge: eee2989 9c99d25
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Fri Feb 24 18:06:11 2017 +0100
+
+    Merge branch 'flags'
+
+commit 9c99d257b98900103ef7998342c5d223ddfb7e42
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Fri Feb 24 17:57:30 2017 +0100
+
+    Changed input system from buffer to single
+    
+    No longer uses a buffer to get input from, instead asks the user every single time for a single number och character.
+
+commit b30d07debb0ef2617e9f20e1b82fdb4aed004a5a
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Fri Feb 24 14:58:11 2017 +0100
+
+    Readded non-color changes from the color commit
+
+commit f28f3707bb1e23f8aeed77eb195c95767b1b4357
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Fri Feb 24 14:39:27 2017 +0100
+
+    Revert "Added experimental color support"
+    
+    This reverts commit 4d21aa72826517fa7c5e5551fad3e01a6910f060.
+
+commit eee2989bf8545918d859ccc2f77c58b6f5acdea5
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Fri Feb 24 14:01:17 2017 +0100
+
+    Smaller changes while reading through with Patrik
+
+commit df06238bd81790e9b926bb1bbfc37791e9208890
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Fri Feb 24 12:57:06 2017 +0100
+
+    Change document structure a bit
+
+commit 4d21aa72826517fa7c5e5551fad3e01a6910f060
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Thu Feb 23 23:02:17 2017 +0100
+
+    Added experimental color support
+
+commit c522df1f1c6cc59b4a65a2b6da2a09005f7f01df
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Thu Feb 23 19:41:34 2017 +0100
+
+    Fixed "@" bug and moved BMemory declaration
+
+commit e5a29e890c6356845f87952b892fba8adcb738d8
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Thu Feb 23 14:53:20 2017 +0100
+
+    Add commit log (for Leslie)
+
 commit edf0077a9e86b613e4859ba9677ffeb9d2cd1970
 Author: Staffan Annerwall <staffan.annerwall@gmail.com>
 Date:   Thu Feb 23 14:50:38 2017 +0100
@@ -9,6 +68,26 @@ Author: Staffan Annerwall <staffan.annerwall@gmail.com>
 Date:   Thu Feb 23 13:28:38 2017 +0100
 
     Give example programs a prefix ex_
+
+commit f040fc7430df6d66d97a7b4ef62be90fdfb72ddb
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Wed Feb 22 23:30:42 2017 +0100
+
+    Added reverser.bf93 and made the debugger also print the stack
+
+commit d327d49379b24173e28af1fb77f41b571966efcf
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Wed Feb 22 20:02:51 2017 +0100
+
+    Added a help screen and finished the flag system
+
+commit fa94dee3b398b30510afaa5c9caaa31e6d71b06b
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Wed Feb 22 17:21:29 2017 +0100
+
+    Added the beginning of flags
+    
+    The flags added are for debug, help and filename. Everything seems to behave as it should.
 
 commit 8013c817293780b9d4c67ab1bac6e34519f9e244
 Author: Staffan Annerwall <staffan.annerwall@gmail.com>

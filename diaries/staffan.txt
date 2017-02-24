@@ -1,3 +1,9 @@
+2017-02-24
+
+5 not very productuve hours
+- Discuss ideas/implementation/program behavior with team members
+- Add instructions for running the interpreter to documentation along with other smaller changes
+
 2017-02-23
 
 2 hours

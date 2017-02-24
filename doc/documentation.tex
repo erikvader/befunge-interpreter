@@ -71,7 +71,7 @@ $(0, 24)$ & $(1, 24)$ & $\cdots$ & $(79, 24)$\\
 \label{fig:grid}
 \end{figure}
 
-The grid can topologically be thought of as a torus (the surface of a doughnut); should the PC at any point try to move outside the bounds of the program space it “wraps around” to the other side. For example, assuming that indexing starts at 0, if the Program Counter (see section \ref{sec:pc}) is at position (6, 24) and attempts to move South, its new position would be (6, 0), still facing South.
+The grid can topologically be thought of as a torus (the surface of a doughnut); should the Program Counter (see section \ref{sec:pc}) at any point try to move outside the bounds of the program space it “wraps around” to the other side. For example, assuming that indexing starts at 0, if the Program Counter (see section \ref{sec:pc}) is at position (6, 24) and attempts to move South, its new position would be (6, 0), still facing South.
 
 In this document we will use “program space”, “space”, “program memory” and “memory” synonymously.
 
@@ -98,22 +98,33 @@ empty
 \subsection{Dependencies}
 \label{dependencies}
 
-empty
+The only non-standard library that the interpreter depends on is \code{System.Random}.
 
-\subsection{Linux}
-\label{sec:runlinux}
+\subsection{Running}
+\label{sec:run}
 
-empty
-
-\subsection{Windows}
-\label{sec:runwindows}
-
-empty
+Given a compiled program \code{main} (or \code{main.exe} on Windows) -- for example compiled with \code{ghc main.hs} -- the interpreter can be run by
+$$\code{./main filename}$$
+on Linux and
+$$\code{main.exe filename}$$
+on Windows, where \code{filename} is the name of the Befunge program to be read. The interpreter can also be run without explicit compilation by using
+$$\code{runhaskell main.hs filename}.$$
 
 \subsection{Command-line arguments}
 \label{args}
 
-empty
+The interpreter can take 2 arguments:
+
+\vspace{6pt}
+\noindent
+\code{--debug}, \code{-d} : Print verbose debug messages while running.
+
+\vspace{6pt}
+\noindent
+\code{--help}, \code{-h}, \code{?} : Print help message and exit.
+
+Flags should be given before the file name, for example:
+$$\code{program -d foo.b93}$$
 
 \section{Instruction list}
 \label{sec:instructions}
@@ -210,7 +221,7 @@ Discarding all values from the stack until a \code{0} is on top is hence very ea
 \centering
 \code{"egnufeB">:\#v\_@}\\
 \code{\hspace{3.5em}\^{} ,<}
-\caption{Printing a string in Befunge. The program prints \code{Befunge}. Note that the string is pushed reversely onto the stack and that the program ends when .}
+\caption{Printing a string in Befunge. The program prints \code{Befunge}. Note that the string is pushed reversely onto the stack and that the program ends when \code{0} is found on the stack.}
 \label{fig:print}
 \end{figure}
 
