@@ -22,7 +22,7 @@
 \maketitle
 
 \begin{abstract}
-This document serves as documentation for the interpreter as well as an introduction to Befunge-93. We describe how to run the interpreter and give a comprehensive list of all supported instruction characters. We give examples of Befunge programs and discuss the implementation, specifically data structures and algorithms. Finally we mention shortcomings and caveats of the interpreter.
+This document serves as documentation for the interpreter as well as an introduction to Befunge-93. It describes how to run the interpreter and gives a comprehensive list of all supported instruction characters. Befunge program examples are provided as well as implementation details. Shortcomings and known caveats of the interpreter are given in the final section.
 \end{abstract}
 
 \newpage
@@ -54,10 +54,6 @@ When referring to the stack this document will sometimes use the notation $\lang
 
 The program space consists of 2,000 cells arranged in a 80 by 25 grid. The upper left corner of this grid is given the coordinate position $(0, 0)$ and the lower right corner is identified as $(79, 24)$, see Figure \ref{fig:grid}.
 
-The grid can topologically be thought of as a torus (the surface of a dough-nut); should the PC at any point try to move outside the bounds of the program space it “wraps around” to the other side. For example, assuming that indexing starts at 0, if the Program Counter (see section \ref{sec:pc}) is at position (6, 24) and attempts to move South, its new position would be (6, 0), still facing South.
-
-In this document we will use “program space”, “space”, “program memory” and “memory” synonymously.
-
 \begin{figure}[!ht]
 \centering
 \begin{tabular}{|c|c|c|c|}
@@ -74,6 +70,10 @@ $(0, 24)$ & $(1, 24)$ & $\cdots$ & $(79, 24)$\\
 \caption{A visualization of the program space in Befunge where each cell is labeled with its coordinates.}
 \label{fig:grid}
 \end{figure}
+
+The grid can topologically be thought of as a torus (the surface of a doughnut); should the PC at any point try to move outside the bounds of the program space it “wraps around” to the other side. For example, assuming that indexing starts at 0, if the Program Counter (see section \ref{sec:pc}) is at position (6, 24) and attempts to move South, its new position would be (6, 0), still facing South.
+
+In this document we will use “program space”, “space”, “program memory” and “memory” synonymously.
 
 \subsubsection{Program flow and the Program Counter}
 \label{sec:pc}
@@ -118,7 +118,7 @@ empty
 \section{Instruction list}
 \label{sec:instructions}
 
-Befunge-93 specifies a total of 35 actions, 10 of which simply push the numeric values 0 -- 9 to the stack, each represented by an ASCII character. Arithmetic is executed using Reverse Polish Notation (RPN).
+Befunge-93 specifies a total of 35 actions each represented by an ASCII character. Arithmetic is executed using Reverse Polish Notation (RPN).
 
 Table \ref{tab:instr} contains a complete list of all characters that the interpreter recognizes. If the PC encounters an unrecognized character, it ignores it completely -- as if it were a space (\textvisiblespace).
 
@@ -141,7 +141,7 @@ Character & Action\\
 \code{<} & Instruct the PC to move West.\\
 \code{\^} & Instruct the PC to move North.\\
 \code{?} & Instruct the PC to move in a random cardinal direction.\\
-\code{\#} & Skip the next instruction; the PC moves twice.\\
+\code{\#} & Skip the next instruction.\\
 \code{\_} & Pop \code{a} and instruct the PC to move West if $\code{a} \neq \code{0}$, otherwise East.\\
 \code{|} & Pop \code{a} and instruct the PC to move North if $\code{a} \neq \code{0}$, otherwise South.\\
 \code{:} & Duplicate the top value of the stack.\\
@@ -170,7 +170,9 @@ Character & Action\\
 
 Addition (\code{+}), subtraction (\code{-}), multiplication (\code{*}), division (\code{/}) and modulo (\code{\%}) execute using Reverse Polish Notation (RPN). That is, the program \code{65-.} prints $1$ (and not $-1$). Divison by \code{0} pushes \code{0} back to the stack regardless of the value of the numerator.
 
-An example that utilizes all of these instructions is the program \code{329*+2*7/4\%.@}. It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like $\langle 3, 18 \rangle$, where the right-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value of 21. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack $\langle 6 \rangle$. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, now \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
+An example that utilizes all of these instructions is the following program
+$$\code{329*+2*7/4\%.@}$$
+It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like $\langle 3, 18 \rangle$, where the right-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value of 21. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack $\langle 6 \rangle$. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, now \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
 
 \subsection{Moving around}
 \label{sec:movement}
@@ -200,9 +202,7 @@ When an input is asked for, the program pauses and “\code{>{}>}” is printed 
 \subsection{If-statements}
 \label{sec:ifs}
 
-The characters \code{\_} and \code{|} are conditionals; one value is popped off the stack the PC changes direction to West and North respectively if the value is non-zero, otherwise East and South, respectively.
-
-If-statements can be used either horizontally using \code{\_} or vertically using \code{|}. Both instructions pop one value off the stack and instructs the PC to move West/North if the value is non-zero, and otherwise East/South.
+The characters \code{\_} and \code{|} are conditionals; one value is popped off the stack and the PC changes direction to West and North respectively if the value is non-zero, otherwise East and South, respectively.
 
 Discarding all values from the stack until a \code{0} is on top is hence very easy: \code{>\_@}. If a string is pushed onto the stack it is also easy to print it, as shown in Figure \ref{fig:print}.
 
@@ -210,7 +210,7 @@ Discarding all values from the stack until a \code{0} is on top is hence very ea
 \centering
 \code{"egnufeB">:\#v\_@}\\
 \code{\hspace{3.5em}\^{} ,<}
-\caption{Printing a string in Befunge. The program prints \code{Befunge}. Note that the string is pushed reversely onto the stack and must end with a 0 on the stack.}
+\caption{Printing a string in Befunge. The program prints \code{Befunge}. Note that the string is pushed reversely onto the stack and that the program ends when .}
 \label{fig:print}
 \end{figure}
 
@@ -320,6 +320,8 @@ empty (remember specifications!)
 also empty
 
 \section{Shortcomings and caveats}
+
+% Cell size: 2 bytes instead of 1
 
 \vfill
 
