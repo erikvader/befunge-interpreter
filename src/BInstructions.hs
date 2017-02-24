@@ -43,19 +43,19 @@ divide           :: BS.BStack -> BS.BStack
 modulo           :: BS.BStack -> BS.BStack
 logicalNot       :: BS.BStack -> BS.BStack
 greaterThan      :: BS.BStack -> BS.BStack
-randomDir        :: BProgramCounter -> IO BProgramCounter
-ifHorizontal     :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
-ifVertical       :: BS.BStack -> BProgramCounter -> (BS.BStack, BProgramCounter)
+randomDir        :: BPC.BProgramCounter -> IO BPC.BProgramCounter
+ifHorizontal     :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
+ifVertical       :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
 duplicate        :: BS.BStack -> BS.BStack
 swap             :: BS.BStack -> BS.BStack
 discard          :: BS.BStack -> BS.BStack
 printInt         :: BS.BStack -> IO BS.BStack
 printAscii       :: BS.BStack -> IO BS.BStack
-readInt          :: BS.BStack -> String -> IO BS.BStack
-readASCII        :: BS.BStack -> String -> IO BS.BStack
-toggleStringMode :: BProgramCounter -> BProgramCounter
-getASCII         :: BMemory -> BS.BStack -> IO BS.BStack
-putASCII         :: BMemory -> BS.BStack -> IO BS.BStack
+readInt          :: BS.BStack -> IO BS.BStack
+readASCII        :: BS.BStack -> IO BS.BStack
+toggleStringMode :: BPC.BProgramCounter -> BPC.BProgramCounter
+getASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
+putASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
 
 --------------------------------------------------------------------------------
 -- implementation
@@ -151,26 +151,32 @@ printAscii stack = do
   hFlush stdout
   return stack'
 
-readInt stack input = do
-   char <- readFromInput input
-   if null char
-      then return stack
-      else return $ BS.push stack (read (firstWord char) :: Int)
-   where firstWord s = head $ words s
+readInt stack = do
+   chars <- readFromInput "Int"
+   if not (isInteger chars)
+      then return $ BS.push stack 0
+      else return $ BS.push stack (read chars :: Int)
+   where
+      isInteger :: String -> Bool
+      isInteger []     = False
+      isInteger ('-':ss) = onlyDigits ss
+      isInteger ss = onlyDigits ss
 
-readASCII stack input = do
-   char <- readFromInput input
-   if null char
-      then return stack
-      else return $ BS.push stack (ord (head char))
+      onlyDigits :: String -> Bool
+      onlyDigits [] = False
+      onlyDigits s  = foldl (\b h -> b && isDigit h) True s
 
---tar en inputsträng, om den är tom ber den användaren att skriva in ngt
+readASCII stack = do
+   chars <- readFromInput "Char"
+   if null chars
+      then return $ BS.push stack 0
+      else return $ BS.push stack (ord (head chars))
+
 readFromInput :: String -> IO String
-readFromInput [] = do
-   putStr ">>"
+readFromInput prefix = do
+   putStr (prefix ++ ">>")
    hFlush stdout
    getLine
-readFromInput input = return input
 
 toggleStringMode pc = BPC.setStringMode pc (not (BPC.isStringMode pc))
 

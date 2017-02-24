@@ -3,6 +3,8 @@ module BMemory (BMemory, buildMemory, getValue, putValue) where
 import Data.Array.IO
 import Types
 
+type BMemory = IOArray Position Char
+
 --------------------------------------------------------------------------------
 -- interface
 --------------------------------------------------------------------------------

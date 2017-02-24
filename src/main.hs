@@ -10,48 +10,51 @@ import qualified BStack as BS
 import qualified BMemory as BM
 import qualified BProgramCounter as BPC
 import qualified BInstructions as BI
+import qualified Flags as F
 import Types
 
 ----------------------------------------
 ----------------------------------------
-_DEBUG :: Bool
-_DEBUG = True
-
-----------------------------------------
 
 main :: IO ()
 main = do
+
   argv <- getArgs
-  let argc = length argv
+  case F.parseFlags argv of
+     status | F.isDisplayHelp status -> printHelpScreen
+            | F.isSyntaxError status -> printFlagError status
+            | otherwise              -> go (F.extractOptions status)
 
-  when (argc == 0) $ do
-    putStrLn "Missing argument filename, exiting"
-    exitFailure
+  putStrLn ""
 
-  when (argc > 1) $
-    putStrLn "Too many arguments, ignoring..."
+printFlagError :: F.FlagStatus -> IO ()
+printFlagError sta = do
+   putStrLn "Wrong use of arguments! use --help for help"
+   putStrLn ("error: " ++ F.extractError sta)
 
-  let filename = head argv
+go :: F.Options -> IO ()
+go opts = do
+   let debug = F.getFlag opts F.Debug False
+   let filename = F.getFlagString opts F.Filename
 
-  rawProgram <- readProgram filename
-  let progLines = lines rawProgram
+   rawProgram <- readProgram filename debug
+   let progLines = lines rawProgram
 
-  (memory, stack, pc) <- initialize progLines
+   (memory, stack, pc) <- initialize progLines
 
-  runProgram memory stack pc
+   runProgram memory stack pc debug
 
-
-initialize :: [String] -> IO (BMemory, BS.BStack, BProgramCounter)
+initialize :: [String] -> IO (BM.BMemory, BS.BStack, BPC.BProgramCounter)
 initialize progLines = do
-  memory <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO BMemory
+  memory <- newArray ((0, 0), (width-1, height-1)) ' ' :: IO BM.BMemory
   BM.buildMemory memory progLines
 
   return (memory, BS.empty, BPC.starting)
 
 
-readProgram :: String -> IO String
-readProgram fname = do
-  when _DEBUG $
+readProgram :: String -> Bool -> IO String
+readProgram fname debug = do
+  when debug $
     putStrLn $ "DEBUG: Reading file \"" ++ fname ++ "\"..."
 
   catch (do
@@ -62,20 +65,20 @@ readProgram fname = do
       exitFailure) :: SomeException -> IO String)
 
 
-runProgram :: BM.BMemory -> BS.BStack -> BProgramCounter -> IO ()
-runProgram mem stack pc = do
+runProgram :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Bool -> IO ()
+runProgram mem stack pc debug = do
   let (x, y) = BPC.getPosition pc
   char <- BM.getValue mem (x, y)
 
-  when _DEBUG $
-    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ")" ++ " counter facing " ++ show (BPC.getDirection pc) ++ " StringMode=" ++ show (BPC.isStringMode pc)
+  when debug $
+    putStrLn $ "DEBUG: Read character '" ++ char : "' at position (" ++ show x ++ ", " ++ show y ++ ") " ++ show stack
 
-  unless (char == '@') $ do
+  unless (char == '@' && not (BPC.isStringMode pc)) $ do
       (stack', pc') <- executeInstruction mem stack pc char
-      runProgram mem stack' (BPC.step pc')
+      runProgram mem stack' (BPC.step pc') debug
 
 
-executeInstruction :: BM.BMemory -> BS.BStack -> BProgramCounter -> Char -> IO (BS.BStack, BProgramCounter)
+executeInstruction :: BM.BMemory -> BS.BStack -> BPC.BProgramCounter -> Char -> IO (BS.BStack, BPC.BProgramCounter)
 executeInstruction mem stack pc char =
   case char of
     '"' -> return (stack, BI.toggleStringMode pc)
@@ -92,8 +95,12 @@ executeInstruction mem stack pc char =
     '>' -> return (stack, BPC.setDirection pc East)
     'v' -> return (stack, BPC.setDirection pc South)
     '<' -> return (stack, BPC.setDirection pc West)
-    '_' -> return $ BI.ifHorizontal stack pc
-    '|' -> return $ BI.ifVertical stack pc
+    '_' -> do
+            let (stack', pc') = BI.ifHorizontal stack pc
+            return (stack', pc')
+    '|' -> do
+            let (stack', pc') = BI.ifVertical stack pc
+            return (stack', pc')
     ':' -> return (BI.duplicate stack, pc)
     '\\' -> return (BI.swap stack, pc)
     '$' -> return (BI.discard stack, pc)
@@ -108,10 +115,10 @@ executeInstruction mem stack pc char =
             stack' <- BI.printAscii stack
             return (stack', pc)
     '&' -> do
-            stack' <- BI.readInt stack []
+            stack' <- BI.readInt stack
             return (stack', pc)
     '~' -> do
-            stack' <- BI.readASCII stack []
+            stack' <- BI.readASCII stack
             return (stack', pc)
     'g' -> do
             stack' <- BI.getASCII mem stack
@@ -121,3 +128,21 @@ executeInstruction mem stack pc char =
             return (stack', pc)
 
     _ -> return (stack, pc)
+
+printHelpScreen :: IO ()
+printHelpScreen = do
+   putStrLn "Befunge-93 Interpreter in Haskell!"
+   putStrLn "Execute a befunge program in the command line!"
+   putStrLn ""
+   putStrLn "use: Main [-options] filename"
+   putStrLn "\'filename\' is a path to a text file with befunge code in it."
+   putStrLn ""
+   putStrLn "Options:"
+   putStrLn "   ?, -h, --help             <-> Displays this help screen"
+   putStrLn "   -d, --debug               <-> Enables debug mode. Prints every step in the execution"
+   putStrLn ""
+   putStrLn "Example:"
+   putStrLn "   Main foo.bf93                       -- Runs the program in foo.txt"
+   putStrLn "   Main -d foo.bf93                    -- will also print every step the cursor is taking"
+   putStrLn ""
+   putStrLn "For Befunge-93 specifics, search on google."
