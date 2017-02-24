@@ -63,3 +63,11 @@ through because I noticed how annoying it would be to add that functionality.
 I would have to give MANY functions two additional arguments that they would
 rarely use. So I felt that it was too annoying and would make the code look too
 ugly, so I just gave up.
+
+# 24/2 - 2017
+Today our group had very lenghty (1.5h-2h) discussion about how input should be handled.
+It was ultimately decided that it would be changed. So I spent maybe 30 min to
+change it.
+The color support I tried to add didn't work for some people, so we decided to
+remove it. To do that I did my very first git revert, it was pretty exciting :)
+Finally I added function definitions to Flags.hs
