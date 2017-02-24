@@ -22,7 +22,7 @@
 \maketitle
 
 \begin{abstract}
-empty
+This document serves as documentation for the interpreter as well as an introduction to Befunge-93. We describe how to run the interpreter and give a comprehensive list of all supported instruction characters. We give examples of Befunge programs and discuss the implementation, specifically data structures and algorithms. Finally we mention shortcomings and caveats of the interpreter.
 \end{abstract}
 
 \newpage
@@ -32,22 +32,22 @@ empty
 \newpage
 
 \section{Introduction}
-We introduce the programming language Befunge-93 and its fundamental principles.
+We introduce the programming language Befunge-93 as well as its stack, program space and program flow.
 \label{sec:intro}
 
 \subsection{What is Befunge-93?}
 \label{sec:whatis}
 
-Befunge is a two-dimensional esoteric programming language developed by Chris Pressey in 1993 \cite{esolangs}. The program to be executed is stored in a 80 by 25 grid, the “program space”, where each cell can hold 1 byte of data.
+Befunge-93 (sometimes in this document simply “Befunge”) is a two-dimensional esoteric programming language developed by Chris Pressey in 1993 \cite{esolangs}. The program to be executed is stored in a 80 by 25 grid, the “program space”, where each cell can hold 1 byte of data. There are no variables available but data can be stored in either a LIFO-stack (last-in-first-out) or, by using the \code{p} instruction, in the program space itself. This allows for the program to modify itself while running. See \ref{sec:pandg} “\nameref{sec:pandg}”.
 
-There are no variables available but data can be stored in either a LIFO-stack (last-in-first-out) or, by using the \code{p} instruction, in the program space itself. This allows for the program to modify itself while running. See \ref{sec:pandg} “\nameref{sec:pandg}”.
+Befunge-93 was the first iteration of several Befunge-specifications which eventually lead to Funge-98, a generalization of in which program spaces can be either one-, two-, or three-dimensional. Funge-98 also provides a paradigm for program spaces in an arbitrary number of dimensions \cite{funge98}. Besides new dimensions, Funge-98 also specifies several new instructions as well as concurrent program flow and a stack of stacks.
 
 \subsubsection{The stack}
 \label{sec:stack}
 
 The stack has the property that it is never truly empty. Instead, if an attempt to pop a value of the stack is made when the stack is thought to be empty, a value of \code{0} is returned. The stack is in all but this one regard a regular LIFO-stack.
 
-When referring to the stack this document will sometimes use the notation $\langle a_n, \cdots, a_1 \rangle$ where $a_1$ is the top-most value of the stack. For example, the Befunge program \code{92+7532@} creates a stack $\langle 11, 7, 5, 3, 2 \rangle$ (and terminates without using any of these values).
+When referring to the stack this document will sometimes use the notation $\langle a_n, \cdots, a_1 \rangle$ where $a_1$ is the top-most value of the stack.
 
 \subsubsection{The program space}
 \label{sec:space}
@@ -90,13 +90,13 @@ The PC starts at position (0, 0) -- the upper-left corner of the program space -
 \end{enumerate}
 These three steps are repeated until an \code{@}-character is read at which point the program immediately terminates. See section \ref{sec:instructions} for more information on instructions.
 
-\subsection{Funge-98}
-\label{sec:funge98}
-
-Befunge-93 was the first iteration of several Befunge-specifications which eventually lead to Funge-98, a generalization of in which program spaces can be either one-, two-, or three-dimensional. Funge-98 also provides a paradigm for program spaces in an arbitrary number of dimensions \cite{funge98}. Besides new dimensions, Funge-98 also specifies several new instructions as well as concurrent program flow and a stack of stacks.
-
 \section{Running the interpreter}
 \label{sec:howtorun}
+
+empty
+
+\subsection{Dependencies}
+\label{dependencies}
 
 empty
 
@@ -107,6 +107,11 @@ empty
 
 \subsection{Windows}
 \label{sec:runwindows}
+
+empty
+
+\subsection{Command-line arguments}
+\label{args}
 
 empty
 
@@ -129,7 +134,7 @@ Character & Action\\
 \code{*} & Pop \code{b}, \code{a}. Push $\code{a} \cdot \code{b}$.\\
 \code{/} & Pop \code{b}, \code{a}. Push \code{0} if $\code{b} = \code{0}$, otherwise the integer part of $\code{a} / \code{b}$.\\
 \code{\%} & Pop \code{b}, \code{a}. Push $\code{a} \text{ mod } \code{b}$.\\
-\code{\`{}} & \footnote{ASCII value 96} Pop \code{b} and \code{a}. If $\code{a} > \code{b}$ then push \code{1}, otherwise push \code{0}.\\
+\code{\`{}} & Pop \code{b} and \code{a}. If $\code{a} > \code{b}$ then push \code{1}, otherwise push \code{0}.\\
 \code{!} & Pop \code{a} and if \code{a} is non-zero then push \code{0}, otherwise push \code{1}.\\
 \code{>} & Instruct the PC to move East.\\
 \code{v} & Instruct the PC to move South.\\
@@ -143,7 +148,7 @@ Character & Action\\
 \code{\textbackslash} & Swap the top two values of the stack.\\
 \code{\$} & Pop a value off the stack and discard it.\\
 \code{g} & Pop \code{y} and \code{x}, then push the value of the character at position $(\code{x}, \code{y})$.\\
-\code{p} & Pop \code{y}, \code{x} and \code{v}, then insert \code{v} at position $(\code{x}, \code{y})$.\\
+\code{p} & Pop \code{y}, \code{x} and \code{v}, then insert \code{v} at position $(\code{x}, \code{y})$ in the memory.\\
 \code{\&} & Wait for user value input and push it.\\
 \code{\textasciitilde} & Wait for user character input and push its ASCII value.\\
 \code{.} & Pop a value and print it, followed by a space (\textvisiblespace).\\
@@ -153,7 +158,7 @@ Character & Action\\
 \begin{comment}
 \end{comment}
 \end{tabular}
-\caption{All instructions available in Befunge-93.}
+\caption{All instructions supported by the interpreter.}
 \label{tab:instr}
 \end{table}
 
@@ -165,12 +170,12 @@ Character & Action\\
 
 Addition (\code{+}), subtraction (\code{-}), multiplication (\code{*}), division (\code{/}) and modulo (\code{\%}) execute using Reverse Polish Notation (RPN). That is, the program \code{65-.} prints $1$ (and not $-1$). Divison by \code{0} pushes \code{0} back to the stack regardless of the value of the numerator.
 
-An example that utilizes all of these instructions is \code{329*+2*7/4\%.@}. It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like $\langle 3, 18 \rangle$, where the right-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value \code{21}. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack \code{6}. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
+An example that utilizes all of these instructions is the program \code{329*+2*7/4\%.@}. It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like $\langle 3, 18 \rangle$, where the right-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value of 21. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack $\langle 6 \rangle$. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, now \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
 
 \subsection{Moving around}
 \label{sec:movement}
 
-There are 7 instructions that can change the direction of the Program Counter: \code{>}, \code{v}, \code{<}, \code{\^}, \code{?}, \code{\_} and \code{|}. We explain what \code{\_} and \code{|} do in section \ref{sec:ifs} “\nameref{sec:ifs}”. The first four should be thought of as arrows; they change the direction of the PC so that it moves in the direction indicated by these “arrows”. The questionmark symbol \code{?} randomizes the direction of the PC to one of four cardinal directions (i.e. one of East, North, South or West).
+There are 7 instructions that can change the direction of the Program Counter: \code{>}, \code{v}, \code{<}, \code{\^}, \code{?}, \code{\_} and \code{|}. We explain what \code{\_} and \code{|} do in section \ref{sec:ifs} “\nameref{sec:ifs}”. The first four instructions should be thought of as arrows; they change the direction of the PC so that it moves in the direction indicated by these “arrows”. The questionmark symbol \code{?} randomizes the direction of the PC to one of four cardinal directions (i.e. one of East, North, South or West).
 
 An example of the four basic move-instructions is shown in Figure \ref{fig:basicmove}. It makes use the the wrap-around property of the program space and never terminates, despite having a termination symbol in the center.
 
@@ -183,7 +188,7 @@ An example of the four basic move-instructions is shown in Figure \ref{fig:basic
 \label{fig:basicmove}
 \end{figure}
 
-Infinite loops are indeed easy to create; you simply force the PC in a path that loops back to where it started. A simple example is the program \code{><}, or, in fact, the empty Befunge program.
+Infinite loops are indeed easy to create; simply force the PC in a path that does not contain any termination symbol.
 
 \subsection{Input and output}
 \label{sec:io}
@@ -205,7 +210,7 @@ Discarding all values from the stack until a \code{0} is on top is hence very ea
 \centering
 \code{"egnufeB">:\#v\_@}\\
 \code{\hspace{3.5em}\^{} ,<}
-\caption{Printing a string in Befunge. The program prints \code{Befunge}. Note that the string is pushed reversely onto the stack and must end with a 0.}
+\caption{Printing a string in Befunge. The program prints \code{Befunge}. Note that the string is pushed reversely onto the stack and must end with a 0 on the stack.}
 \label{fig:print}
 \end{figure}
 
