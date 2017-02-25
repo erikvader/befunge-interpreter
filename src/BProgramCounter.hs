@@ -7,21 +7,101 @@ import Types
 -- interface
 --------------------------------------------------------------------------------
 
-starting      :: BProgramCounter
-reverse       :: BProgramCounter -> BProgramCounter
-step          :: BProgramCounter -> BProgramCounter
-getPosition   :: BProgramCounter -> Position
-setPosition   :: BProgramCounter -> Position -> BProgramCounter
-setDirection  :: BProgramCounter -> Direction -> BProgramCounter
-getDirection  :: BProgramCounter -> Direction
+--the counter when the befunge program starts
+starting :: BProgramCounter
+
+{- reverse programCounter
+  PRE: True
+  POST: programCounter with the direction reversed
+  SIDE EFFECTS: None
+  Examples:
+    reverse (PC (pos, North, False)) = PC (pos, South, False)
+    reverse (PC (pos, East, False)) = PC (pos, West, False)
+    reverse (PC (pos, South, False)) = PC (pos, North, False)
+    reverse (PC (pos, West, False)) = PC (pos, East, False)
+-}
+reverse :: BProgramCounter -> BProgramCounter
+
+{- step programCounter
+  PRE: True
+  POST: programCounter after taking one step in the direction it is facing
+  SIDE EFFECTS: None
+  EXAMPLES:
+    step (PC ((2, 5), East, False)) == PC ((3, 5), East, False)
+    step (PC ((2, 5), North, False)) == PC ((2, 4), North, False)
+-}
+step :: BProgramCounter -> BProgramCounter
+
+{- getPosition programCounter
+   PRE: True
+   POST: programCounter's current position as a tuple (x, y)
+   SIDE EFFECTS: None
+   EXAMPLES:
+    getPosition PC ((2, 5), East, False) == (2, 5)
+-}
+getPosition :: BProgramCounter -> Position
+
+{- setPosition programCounter newPosition
+  PRE: True
+  POST: programCounter with its position changed to newPosition
+  SIDE EFFECTS: None
+  EXAMPLES:
+    setPosition PC ((2, 5), East, False) (3, 6) == PC ((3, 6), East, False)
+-}
+setPosition :: BProgramCounter -> Position -> BProgramCounter
+
+{- setDirection programCounter newDirection
+  PRE: True
+  POST: programCounter with its direction changed to newDirection
+  SIDE EFFECTS: None
+  EXAMPLES:
+    setDirection PC ((2, 5), East, False) North = PC ((2, 5), North, False)
+-}
+setDirection :: BProgramCounter -> Direction -> BProgramCounter
+
+{- getDirection programCounter
+  PRE: True
+  POST: programCounter's current direction
+  SIDE EFFECTS: None
+  EXAMPLES:
+    getDirection PC ((2, 5), East, False) == East
+-}
+getDirection :: BProgramCounter -> Direction
+
+{- isStringMode programCounter
+  PRE: True
+  POST: programCounter's current stringMode
+  SIDE EFFECTS: None
+  EXAMPLES:
+   isStringMode PC ((2, 5), East, False) == False
+-}
 isStringMode :: BProgramCounter -> StringMode
+
+{- setStringMode programCounter newStringMode
+  PRE: True
+  POST: programCounter with its stringMode set to newStringMode
+  SIDE EFFECTS: None
+  EXAMPLES:
+    setStringMode PC ((2, 5), East, False) True == PC ((2, 5), East, True)
+-}
 setStringMode :: BProgramCounter -> StringMode -> BProgramCounter
+
+{- REPRESENTATION CONVENTION:
+      - PC (p, d, s) where p is the zero-indexed position the counter is located at
+                           d is the direction the counter is facing
+                           s is True if the befunge program is in StringMode and False otherwise.
+
+   REPRESENTATION INVARIANT:
+      p = (x, y), it must be true that:
+         - 0 <= x < width
+         - 0 <= y < height
+
+-}
+newtype BProgramCounter = PC (Position, Direction, StringMode) deriving (Show)
 
 --------------------------------------------------------------------------------
 -- implementation
 --------------------------------------------------------------------------------
-
-newtype BProgramCounter = PC (Position, Direction, StringMode) deriving (Show)
 
 starting = PC ((0, 0), East, False)
 
