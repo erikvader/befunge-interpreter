@@ -91,10 +91,7 @@ setStringMode :: BProgramCounter -> StringMode -> BProgramCounter
                            d is the direction the counter is facing
                            s is True if the befunge program is in StringMode and False otherwise.
 
-   REPRESENTATION INVARIANT:
-      p = (x, y), it must be true that:
-         - 0 <= x < width
-         - 0 <= y < height
+   REPRESENTATION INVARIANT: True
 
 -}
 newtype BProgramCounter = PC (Position, Direction, StringMode) deriving (Show)

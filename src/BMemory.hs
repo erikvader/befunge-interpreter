@@ -38,7 +38,8 @@ putValue :: BMemory -> Position -> Char -> IO ()
 
 {- REPRESENTATION CONVENTION:
       BMemory is an array which represents the grid the befunge program is operating on.
-
+            The top left corner of the grid has the position (0, 0). x is positive
+            to the right and y is positive downwards.
    REPRESENTATION INVARIANT: True
 
 -}
