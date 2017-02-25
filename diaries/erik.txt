@@ -71,3 +71,6 @@ change it.
 The color support I tried to add didn't work for some people, so we decided to
 remove it. To do that I did my very first git revert, it was pretty exciting :)
 Finally I added function definitions to Flags.hs
+
+# 25/2 - 2017
+Added the last function defintions in Flags, Types, Main and BInstructions.

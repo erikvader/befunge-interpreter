@@ -1,5 +1,4 @@
 module BInstructions (
-   pushStack,
    add,
    subtract,
    multiply,
@@ -14,7 +13,7 @@ module BInstructions (
    swap,
    discard,
    printInt,
-   printAscii,
+   printASCII,
    readInt,
    readASCII,
    toggleStringMode,
@@ -35,33 +34,164 @@ import Types
 -- interface
 --------------------------------------------------------------------------------
 
-pushStack        :: BS.BStack -> Int -> BS.BStack
-add              :: BS.BStack -> BS.BStack
-subtract         :: BS.BStack -> BS.BStack
-multiply         :: BS.BStack -> BS.BStack
-divide           :: BS.BStack -> BS.BStack
-modulo           :: BS.BStack -> BS.BStack
-logicalNot       :: BS.BStack -> BS.BStack
-greaterThan      :: BS.BStack -> BS.BStack
-randomDir        :: BPC.BProgramCounter -> IO BPC.BProgramCounter
-ifHorizontal     :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
-ifVertical       :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
-duplicate        :: BS.BStack -> BS.BStack
-swap             :: BS.BStack -> BS.BStack
-discard          :: BS.BStack -> BS.BStack
-printInt         :: BS.BStack -> IO BS.BStack
-printAscii       :: BS.BStack -> IO BS.BStack
-readInt          :: BS.BStack -> IO BS.BStack
-readASCII        :: BS.BStack -> IO BS.BStack
+{- add s
+   PRE: True
+   POST: pops the first two elements from s and pushes their sum to s
+-}
+add :: BS.BStack -> BS.BStack
+
+{- subtract s
+   PRE: True
+   POST: pops b from s, then pops a from s and finally pushes (a - b) to s
+-}
+subtract :: BS.BStack -> BS.BStack
+
+{- multiply s
+   PRE: True
+   POST: pops the first two elements from s and pushes their product to s
+-}
+multiply :: BS.BStack -> BS.BStack
+
+{- divide s
+   PRE: True
+   POST: pops b from s, then pops a from s and finally pushes (a `div` b) to s
+         If b would be 0, then 0 is pushed to s instead.
+-}
+divide :: BS.BStack -> BS.BStack
+
+{- modulo s
+   PRE: True
+   POST: pops b from s, then pops a from s and finally pushes (a `mod` b) to s
+         If b would be 0, then 0 is pushed to s instead.
+-}
+modulo :: BS.BStack -> BS.BStack
+
+{- logicalNot s
+   PRE: True
+   POST: pops a from s and pushes:
+            1 if a == 0
+            0 if a /= 0
+         back to s
+-}
+logicalNot :: BS.BStack -> BS.BStack
+
+{- greaterThan s
+   PRE: True
+   POST: first pops b then a from s and pushes:
+            1 if a > b
+            0 if a <= b
+         back to s
+-}
+greaterThan :: BS.BStack -> BS.BStack
+
+{- randomDir pc
+   PRE: True
+   POST: pc but with a random Direction
+   SIDE EFFECTS: takes a random number from randomRIO
+-}
+randomDir :: BPC.BProgramCounter -> IO BPC.BProgramCounter
+
+{- ifHorizontal s pc
+   PRE: True
+   POST: (s', pc') where s' is s but without its top element, and pc' is pc but
+         its direction is set to:
+            East if the top element in s is 0
+            West otherwise
+-}
+ifHorizontal :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
+
+{- ifVertical s pc
+   PRE: True
+   POST: (s', pc') where s' is s but without its top element, and pc' is pc but
+         its direction is set to:
+            South if the top element in s is 0
+            North otherwise
+-}
+ifVertical :: BS.BStack -> BPC.BProgramCounter -> (BS.BStack, BPC.BProgramCounter)
+
+{- duplicate s
+   PRE: True
+   POST: s with its top element pushed again
+-}
+duplicate :: BS.BStack -> BS.BStack
+
+{- swap s
+   PRE: True
+   POST: s but with its first two elements swapped
+-}
+swap :: BS.BStack -> BS.BStack
+
+{- discard s
+   PRE: True
+   POST: s without its first element
+-}
+discard :: BS.BStack -> BS.BStack
+
+{- printInt s
+   PRE: True
+   POST: s without its top element
+   SIDE EFFECTS: prints out the top element in s as a number and a space to stdout
+   EXAMPLES: printInt (BStack [65]) = IO (BStack []) : and prints '65 '
+-}
+printInt :: BS.BStack -> IO BS.BStack
+
+{- printASCII s
+   PRE: True
+   POST: s without its top element
+   SIDE EFFECTS: prints out the top element in s converted to ASCII to stdout
+   EXAMPLES: printASCII (BStack [65]) = IO (BStack []) : and prints 'A'
+-}
+printASCII :: BS.BStack -> IO BS.BStack
+
+{- readInt s
+   PRE: True
+   POST: s with a number read from stdin pushed to it. If the input can't be
+         parsed to a number, 0 is pushed to s instead.
+   SIDE EFFECTS: prints a prompt to stdout and waits for input on stdin
+-}
+readInt :: BS.BStack -> IO BS.BStack
+
+{- readASCII s
+   PRE: True
+   POST: s with the first character from stdin pushed as its ASCII-value.
+         If the input was empty, 0 is pushed to s instead.
+   SIDE EFFECTS: prints a prompt to stdout and waits for input on stdin
+-}
+readASCII :: BS.BStack -> IO BS.BStack
+
+{- readFromInput s
+   PURPOSE: helper function to readASCII and readInt
+   PRE: True
+   POST: raw input from stdin as a String
+   SIDE EFFECTS: prompts the user with (s ++ ">>") and waits for input in stdin
+-}
+readFromInput :: String -> IO String
+
+{- toggleStringMode pc
+   PRE: True
+   POST: pc with its StringMode set to True if it was False, and False if it was True.
+   EXAMPLES: examples
+-}
 toggleStringMode :: BPC.BProgramCounter -> BPC.BProgramCounter
-getASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
-putASCII         :: BM.BMemory -> BS.BStack -> IO BS.BStack
+
+{- getASCII m s
+   PRE: True
+   POST: the first two elements from s are popped where the first one is y and the
+         second one is x. s is returned with the ASCII-value stored in m at position
+         (x, y) pushed to s.
+-}
+getASCII :: BM.BMemory -> BS.BStack -> IO BS.BStack
+
+{- putASCII m s
+   PRE: True
+   POST: y, x and c is popped from s in order
+   SIDE EFFECTS: the character at position (x, y) in m is set to the character c converted to ASCII.
+-}
+putASCII :: BM.BMemory -> BS.BStack -> IO BS.BStack
 
 --------------------------------------------------------------------------------
 -- implementation
 --------------------------------------------------------------------------------
-
-pushStack = BS.push
 
 add stack =
   let (stack', b) = BS.pop stack
@@ -91,8 +221,9 @@ divide stack =
 modulo stack =
   let (stack', b) = BS.pop stack
       (stack'', a) = BS.pop stack'
-  in
-    BS.push stack'' (mod a b)
+  in case b of
+    0 -> BS.push stack'' 0
+    _ -> BS.push stack'' (mod a b)
 
 logicalNot stack =
   let (stack', a) = BS.pop stack
@@ -145,7 +276,7 @@ printInt stack = do
   hFlush stdout
   return stack'
 
-printAscii stack = do
+printASCII stack = do
   let (stack', a) = BS.pop stack
   putStr [chr a]
   hFlush stdout
@@ -172,7 +303,6 @@ readASCII stack = do
       then return $ BS.push stack 0
       else return $ BS.push stack (ord (head chars))
 
-readFromInput :: String -> IO String
 readFromInput prefix = do
    putStr (prefix ++ ">>")
    hFlush stdout
