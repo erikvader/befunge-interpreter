@@ -109,11 +109,12 @@ on Linux and
 $$\code{main.exe filename}$$
 on Windows, where \code{filename} is the name of the Befunge program to be read. The interpreter can also be run without explicit compilation by using
 $$\code{runhaskell main.hs filename}.$$
+This requires the command prompt to be in the same directory as the file \code{main.hs}.
 
 \subsection{Command-line arguments}
 \label{args}
 
-The interpreter can take 2 arguments:
+The interpreter can take two arguments:
 
 \vspace{6pt}
 \noindent
@@ -206,7 +207,7 @@ Infinite loops are indeed easy to create; simply force the PC in a path that doe
 \subsection{Input and output}
 \label{sec:io}
 
-Input can be asked for by \code{\&} for numerical values and \code{\~} for single-character inputs. Output is given by \code{.} and \code{,} for numeric and ASCII-characters respectively. The program \code{\~{}.@} asks for a character input and prints its numerical value before terminating. The program \code{\&:!\#@\_.} asks for numerical inputs and echoes whatever the user entered until the users enters \code{0}.
+Input can be asked for by \code{\&} for numerical values and \code{\~} for single-character inputs. Output is given by \code{.} and \code{,} for numeric and ASCII-characters respectively. For example, the 3 character long program \code{\~{}.@} asks for a character input and prints its numerical value before terminating. The program \code{\&:!\#@\_.} asks for numerical inputs and echoes whatever the user entered until the users enters \code{0}.
 
 When an input is asked for, the program pauses and “\code{>{}>}” is printed to the console to indicate that a value (or character) should be entered. After a value (or character) is entered, the program resumes. Should more than one value be entered, everything but the first value is ignored.
 
