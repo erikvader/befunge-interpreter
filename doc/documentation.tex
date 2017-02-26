@@ -88,7 +88,7 @@ The PC starts at position (0, 0) -- the upper-left corner of the program space -
 \item Step the PC one step in its direction.
 
 \end{enumerate}
-These three steps are repeated until an \code{@}-character is read at which point the program immediately terminates. See section \ref{sec:instructions} for more information on instructions.
+These three steps are repeated until an \code{@}-character is read at which point the program immediately terminates. See section \ref{sec:flow} for more information on program flow of the interpreter.
 
 \section{Running the interpreter}
 \label{sec:howtorun}
@@ -177,12 +177,14 @@ Character & Action\\
 \section{Example programs}
 \label{sec:examples}
 
+We provide examples of Befunge programs and explain in detail how they are executed.
+
 \subsection{Basic arithmetic}
 \label{sec:arith}
 
-Addition (\code{+}), subtraction (\code{-}), multiplication (\code{*}), division (\code{/}) and modulo (\code{\%}) execute using Reverse Polish Notation (RPN). That is, the program \code{65-.} prints $1$ (and not $-1$). Divison by \code{0} pushes \code{0} back to the stack regardless of the value of the numerator.
+Addition (\code{+}), subtraction (\code{-}), multiplication (\code{*}), division (\code{/}) and modulo (\code{\%}) execute using Reverse Polish Notation (RPN). That is, the program snippet \code{65-.} prints $1$ (and not $-1$). Divison by \code{0} pushes \code{0} back to the stack regardless of the value of the numerator.
 
-An example that utilizes all of these instructions is the following program
+An example that utilizes all of these instructions is the following program:
 $$\code{329*+2*7/4\%.@}$$
 It first pushes \code{3}, \code{2} and \code{9} to the stack followed by a multiplication of the top two values making the stack look like $\langle 3, 18 \rangle$, where the right-most value is the top of the stack. The \code{+} instruction adds the top two values on the stack; the stack now contains a single value of 21. This is then multiplied by \code{2} and divided by \code{7} resulting in the stack $\langle 6 \rangle$. Finally, a \code{4} is pushed and the modulo operation \code{\%} calculates $6 \text{ mod } 4 = 2$ and pushes it. The top value on the stack, now \code{2}, is printed by \code{.} and the program stops after reading the \code{@}-character.
 
@@ -326,14 +328,32 @@ empty
 
 empty (remember specifications!)
 
-\subsubsection{Program flow}
+\subsubsection{Program flow of the interpreter}
 \label{sec:flow}
 
-also empty
+The interpreter begins by validating the arguments and if that succeeds proceeds to read the input file. The contents of the file is put into an array and execution begins at position (0,0) with the PC having an initial direction of East and an empty stack.
+
+The main interpreter loop extracts the character at the PC's position from the array and terminates if it is an \code{@}-character and string mode (see \ref{?}) is disabled. Otherwise, one of two things happen:
+
+\begin{itemize}
+\item If string mode is enabled then the ASCII value of the given character is pushed onto the stack.
+
+\item If string mode is disabled, a subfunction specific to that Befunge instruction is called which updates the PC, stack and program space (the array) as accordingly.
+\end{itemize}
+
+Finally, the loop starts again with the updated PC, stack and array.
 
 \section{Shortcomings and caveats}
 
-% Cell size: 2 bytes instead of 1
+There are a few shortcomings and caveats that should be noted:
+
+\begin{itemize}
+
+\item Because the program space is effectively an array of Haskell's data type \code{Char}, each cell is capable of holding 1,114,111 values, instead of the 256 values (1 byte) specified in the Befunge documentation \cite{befunge93}.
+
+\item Infinite loops in Befunge programs \emph{can not} be terminated without terminating the interpreter.
+
+\end{itemize}
 
 \vfill
 
