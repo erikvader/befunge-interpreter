@@ -94,7 +94,7 @@ setStringMode :: BProgramCounter -> StringMode -> BProgramCounter
    REPRESENTATION INVARIANT: True
 
 -}
-newtype BProgramCounter = PC (Position, Direction, StringMode) deriving (Show)
+newtype BProgramCounter = PC (Position, Direction, StringMode) deriving (Show, Eq)
 
 --------------------------------------------------------------------------------
 -- implementation

@@ -8,7 +8,7 @@ module Types (Position, Direction(North, East, South, West), width, height, Stri
          - 0 <= x < width
          - 0 <= y < height
 -}
-type Position = (Int, Int)
+type Position = (Int, Int) 
 
 {- REPRESENTATION CONVENTION:
       Represents a direction the BProgramCounter can face on the grid.
@@ -20,7 +20,7 @@ type Position = (Int, Int)
    REPRESENTATION INVARIANT: True
 
 -}
-data Direction = North | East | South | West deriving Show
+data Direction = North | East | South | West deriving (Show, Eq)
 
 {- REPRESENTATION CONVENTION: Whether the befunge program is in string mode or not.
    REPRESENTATION INVARIANT: True

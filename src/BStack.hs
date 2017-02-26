@@ -43,14 +43,14 @@ top :: BStack -> Int
 
    REPRESENTATION INVARIANT: BStack l: l can not contain only zeros.
 -}
-newtype BStack = BStack [Int]
+newtype BStack = BStack [Int] deriving (Eq)
+
+instance Show BStack where
+   show (BStack s) = "Stack: " ++ show (reverse s)
 
 --------------------------------------------------------------------------------
 -- implementation
 --------------------------------------------------------------------------------
-
-instance Show BStack where
-   show (BStack s) = "Stack: "++ show (reverse s)
 
 empty = BStack []
 
