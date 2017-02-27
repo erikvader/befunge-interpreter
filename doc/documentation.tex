@@ -336,7 +336,9 @@ The interpreter begins in function \code{main} to get the arguments and validate
 
 The main interpreter loop, which takes place in \code{runProgram}, begins by reading the character at the PC's position from the program space. If string mode is disabled and the character is an \code{@} then the interpreter stops immediately. Otherwise, \code{executeInstruction} is called which, depending on whether string mode is enabled or disabled as well as the character read, calls functions imported from the module \code{BInstructions} where all Befunge instructions are implemented. Finally, the \code{runProgram} calls itself with an updated PC, stack and array.
 
-\section{Shortcomings and caveats}
+\section{Shortcomings, caveats and unimplemented ideas}
+
+
 
 There are a few shortcomings and caveats that should be noted:
 
@@ -345,6 +347,10 @@ There are a few shortcomings and caveats that should be noted:
 \item Because the program space is effectively an array of Haskell's data type \code{Char}, each cell is capable of holding 1,114,111 values, instead of the 256 values (1 byte) specified in the Befunge documentation \cite{befunge93}.
 
 \item Infinite loops in Befunge programs \emph{can not} be terminated without terminating the interpreter.
+
+\item We had an idea of adding an argument \code{--input}, or \code{-i}, which would take input as an argument to the interpreter rather than during runtime. The idea was briefly implemented but discarded as it seemed unintuitive.
+
+\item Another unimplemented idea was instructions \code{P} and \code{G} which, in contrast to their lower case counterparts, would work on a larger scale. \code{P} would overwrite the original input file with the current program space, and \code{G} would read an entirely new file and store it in the current program space. This was not implemented because we lacked the time.
 
 \end{itemize}
 
