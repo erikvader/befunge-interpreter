@@ -335,7 +335,52 @@ Both \code{getValue} and \code{putValue} wraps array indices using modulus.
 \subsection{Algorithms}
 \label{sec:algorithms}
 
-empty
+Describing in detail the few simple algorithms this interpreter has.
+
+\subsubsection{BuildMemory}
+\label{sec:buildMemory}
+
+This algorithm is executed in the function \code{buildMemory} in the module \code{BMemory} and is responsible for converting a textfile with befunge code to a grid in memory. The textfile is represented as a list of strings (\code{[String]}) where every string is a line from top to bottom in the file. The creation of the \code{BMemory} itself is performed elsewhere, this algorithm only fills an \code{BMemory} with the correct values.
+
+The algorithm is as follows:
+\begin{enumerate}
+\itemsep-0.5em
+\item set $y=0$
+\item take the line at row $y$
+\item set $x=0$
+\item get the character $c$ at column $x$ at line $y$
+\item set the cell at position $(x, y)$ in \code{memory} to $c$
+\item increase $x$ by $1$
+\item \code{if (x >= 80 or endOfLine)} continue \code{else} goto 4
+\item increase $y$ by $1$
+\item \code{if (y >= 25 or endOfFile)} continue \code{else} goto 2
+\item done
+\end{enumerate}
+
+The first character on the first line in the file is put at position $(0, 0)$, the second character at position $(1, 0)$ etc. until it reaches the end of the line, or it has read 80 characters (width of the grid). Then the row is increased by 1 and the algorithm repeats the last part. The first character at this next row is put at position $(0, 1)$, the next at $(1, 1)$ etc. The algorithm finally stops when the file doesn't have anymore lines, or if it has read 25 lines.
+
+\subsubsection{ParseFlags}
+\label{sec:parseFlags}
+
+This algorithm is executed in the function \code{parseFlags} in the module \code{Flags}. It takes a \code{[String]} with all commandline arguments (or flags) and parses them, extracting the information in them and puts that in a \code{HashMap}. The \code{HashMap} maps \code{Flag} to a \code{String} $s$, where $s$ is some kind of information about the flag (usually "True" or "False") and \code{Flag} is a datatype enumerating all possible flags; \code{Filename}, \code{Debug} and \code{Help}. A key-value pair for the \code{HashMap} will be written as (\code{k $\Rightarrow$ v}) in this document.
+
+The algorithm step by step:
+\begin{enumerate}
+\itemsep-0.5em
+\item get all flags as $f$
+\item let empty $\code{HashMap} = h$
+\item \code{if ($f$ is empty)} throw error "no arguments"
+\item let $i = 0$
+\item try to parse $f(i)$ to a \code{Flag} and name it $F$
+\item \code{if (not successfull)} throw error "invalid flag"
+\item \code{if ($f(i)$ is the last one in $f$)} add (\code{Filename} $\Rightarrow f(i)$) to $h$ and goto 11
+\item add ($F \Rightarrow "True"$) to $h$
+\item increase $i$ by one
+\item goto 5
+\item return $h$
+\end{enumerate}
+
+So this algorithm goes through all flags one by one and tries to parse them and adding themselves to the \code{HashMap}. The last flag is a special case, it is always the \code{Filename}. 
 
 \subsection{Major functions}
 \label{sec:functions}
