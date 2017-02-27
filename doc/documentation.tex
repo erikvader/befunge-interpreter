@@ -93,17 +93,17 @@ These three steps are repeated until an \code{@}-character is read at which poin
 \section{Running the interpreter}
 \label{sec:howtorun}
 
-empty
+The interpreter has no graphical user interface and is run for the command line.
 
 \subsection{Dependencies}
-\label{dependencies}
+\label{sec:dependencies}
 
 The only non-standard library that the interpreter depends on is \code{System.Random}.
 
 \subsection{Running}
 \label{sec:run}
 
-Given a compiled program \code{main} (or \code{main.exe} on Windows) -- for example compiled with \code{ghc main.hs} -- the interpreter can be run by
+Given a compiled program \code{main} (or \code{main.exe} on Windows) -- for example compiled with \code{ghc main.hs} -- the interpreter can be run from the terminal by
 $$\code{./main filename}$$
 on Linux and
 $$\code{main.exe filename}$$
@@ -112,7 +112,7 @@ $$\code{runhaskell main.hs filename}.$$
 This requires the command prompt to be in the same directory as the file \code{main.hs}.
 
 \subsection{Command-line arguments}
-\label{args}
+\label{sec:args}
 
 The interpreter can take two arguments:
 
@@ -124,8 +124,10 @@ The interpreter can take two arguments:
 \noindent
 \code{--help}, \code{-h}, \code{?} : Print help message and exit.
 
+\vspace{6pt}
+\noindent
 Flags should be given before the file name, for example:
-$$\code{program -d foo.b93}$$
+$$\code{main -d foo.b93}$$
 
 \section{Instruction list}
 \label{sec:instructions}
@@ -165,14 +167,18 @@ Character & Action\\
 \code{\textasciitilde} & Wait for user character input and push its ASCII value.\\
 \code{.} & Pop a value and print it, followed by a space (\textvisiblespace).\\
 \code{,} & Pop a value and print its ASCII character.\\
-\code{\textvisiblespace} & Spaces are ignored, the PC continues and no other modifications are made. \\
+\code{"} & Toggles string mode, see section \ref{sec:stringmode}.\\
+\code{\textvisiblespace} & Spaces are ignored, the PC continues and no other modifications are made.\\
 \code{@} & Terminate the program.
-\begin{comment}
-\end{comment}
 \end{tabular}
 \caption{All instructions supported by the interpreter.}
 \label{tab:instr}
 \end{table}
+
+\subsection{String mode}
+\label{sec:stringmode}
+
+When the PC encounters a \code{"}-character it toggles what is called “string mode”. When string mode is enabled, all subsequent characters read have their ASCII value pushed onto the stack without executing any action. String mode is then enabled until the PC encounters a \code{"}-character again. For example, the program \code{"@".@} prints \code{64} before terminating.
 
 \section{Example programs}
 \label{sec:examples}
@@ -333,7 +339,7 @@ empty (remember specifications!)
 
 The interpreter begins by validating the arguments and if that succeeds proceeds to read the input file. The contents of the file is put into an array and execution begins at position (0,0) with the PC having an initial direction of East and an empty stack.
 
-The main interpreter loop extracts the character at the PC's position from the array and terminates if it is an \code{@}-character and string mode (see \ref{?}) is disabled. Otherwise, one of two things happen:
+The main interpreter loop extracts the character at the PC's position from the array and terminates if it is an \code{@}-character and string mode (see \ref{sec:stringmode}) is disabled. Otherwise, one of two things happen:
 
 \begin{itemize}
 \item If string mode is enabled then the ASCII value of the given character is pushed onto the stack.
