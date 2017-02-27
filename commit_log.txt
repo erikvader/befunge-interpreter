@@ -1,3 +1,142 @@
+commit 9046532d757c5f832091c4665d7a0288980a214b
+Merge: dcc021b c449ad1
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 16:10:03 2017 +0100
+
+    Merge branch 'master' of https://github.com/Program-Design-and-Datastructures/Project-42
+
+commit dcc021bf1bd1799c055b2177f86e673ffa0b90d2
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 16:09:37 2017 +0100
+
+    Recompile documentation pdf
+
+commit c449ad10d46a3aa972454517ed922e54b05e9243
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Mon Feb 27 16:08:50 2017 +0100
+
+    Fixed reverser.bf93 for new IO system
+
+commit fee0484c0443f3670a52f5774d41f3c78b3b7298
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 16:06:22 2017 +0100
+
+    Make diaries .pdf's
+
+commit 817acda06b4799593a33014ffbbfb2ee86785d1e
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 15:51:40 2017 +0100
+
+    Better structure in .tex file
+
+commit 02b92727f00a8fcaae39b28f8792c6b8251b87e8
+Author: Patrik Johansson <Patrik.Viby@gmail.com>
+Date:   Mon Feb 27 15:44:07 2017 +0100
+
+    Added 5.1.1 - Program Counter and its attributes
+
+commit fbcaf06b46709628620fa426fbdb03177a116af2
+Merge: ee0595b 71ea614
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 15:29:28 2017 +0100
+
+    Merge branch 'staffan-doc'
+    
+    Conflicts:
+    	doc/documentation.pdf
+
+commit 71ea61493a031534e30675c02e53c40af77f42da
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 15:08:19 2017 +0100
+
+    Add section 6, shortcomings and caveats
+
+commit ee0595b4091a3d5a9894c0a6ab374d39ee88ae55
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Mon Feb 27 15:04:43 2017 +0100
+
+    Added iary and removed PDF
+
+commit f20716f44f907509fd981b42102257fd0fded148
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Mon Feb 27 14:56:08 2017 +0100
+
+    Added to algorithms 5.2
+
+commit 394671077f138900f8ba737a5d27b13fef2d5ce0
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 12:43:39 2017 +0100
+
+    Structure changes to section 5.3
+
+commit 25bd92eb6b9fa6747d950030af9610143add3ce4
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Mon Feb 27 12:04:39 2017 +0100
+
+    Added to section dependencies
+
+commit c7438ac9359f0f4fc1624f94d7e6e245025bcd84
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 11:15:29 2017 +0100
+
+    oops
+
+commit f5fe5dd18382d6c62ac8e06f531489e044fe4c21
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 11:14:19 2017 +0100
+
+    doc/documentation.pdf
+
+commit 70affa2101f9306a58623311d2bef81c3ee86b09
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Sun Feb 26 22:48:11 2017 +0100
+
+    Added test cases
+
+commit 9afb2a62bc3231f237d41b29ea027c2ec05b6567
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Sun Feb 26 17:26:11 2017 +0100
+
+    Add interpreter flow and shortcomings to documentation
+
+commit 73303752234e8661fa9d792cfe7fc9ba6c8ea2c5
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Sat Feb 25 19:58:15 2017 +0100
+
+    The last function Definitions
+
+commit 3a0e16d176cab85807e7aaf7b167b4d5ad5ffa8b
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Sat Feb 25 17:25:33 2017 +0100
+
+    Datatype representations in Type.hs
+
+commit 3069c9e5acb32788e560d240aaf22f7629e17f72
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Sat Feb 25 17:07:18 2017 +0100
+
+    Added some function definitions. cred to Patrik
+    
+    The datatype representations for Bmemory, BProgramCounter and BStack were written by me.
+
+commit 400b71e8275bf85d4db0c2dbbd579b4c024b13b7
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Sat Feb 25 10:05:52 2017 +0100
+
+    Very small changes
+
+commit f61d65c4ed7a58712008da60b8b1f356ba361d80
+Author: Erik Rimskog <erik.rimskog@gmail.com>
+Date:   Fri Feb 24 19:19:52 2017 +0100
+
+    Function definitions in Flags.hs
+
+commit 1686b59d09cee7de6dfa7aae87b8b39e7652afa0
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Fri Feb 24 18:19:53 2017 +0100
+
+    Add running interpreter to documentation
+
 commit c4a703bcb4ba3395f3239f5ae59b262d89ce9169
 Merge: eee2989 9c99d25
 Author: Erik Rimskog <erik.rimskog@gmail.com>
