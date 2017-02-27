@@ -1,3 +1,21 @@
+commit ebd593a00634a0ce318c9ffec7ca3bebc4c7110d
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 16:44:56 2017 +0100
+
+    Update diaries and fix spelling mistake in documentation
+
+commit d9ac396ac7935f43fd6e660d63e1d9708b5d0de8
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 16:34:58 2017 +0100
+
+    Minor document changes.
+
+commit cd210e5bb9716690021e8a3d99e09dae1104b6b0
+Author: Staffan Annerwall <staffan.annerwall@gmail.com>
+Date:   Mon Feb 27 16:12:51 2017 +0100
+
+    Update commit log
+
 commit 9046532d757c5f832091c4665d7a0288980a214b
 Merge: dcc021b c449ad1
 Author: Staffan Annerwall <staffan.annerwall@gmail.com>
