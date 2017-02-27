@@ -74,3 +74,6 @@ Finally I added function definitions to Flags.hs
 
 # 25/2 - 2017
 Added the last function defintions in Flags, Types, Main and BInstructions.
+
+#27/2 - 2017
+Today all three of us had a last minute working session on this project.
