@@ -288,7 +288,24 @@ In which we discuss how the interpreter is implemented, including the data struc
 \subsection{Data structures}
 \label{sec:structures}
 
-empty
+Befunge-93 consist of three main data structures: the program counter, the stack and the program space.
+
+\subsubsection{Program Counter and its attributes}
+\label{sec:structprogramcounter}
+The Befunge Program Counter, defined in \code{BProgramCounter.hs} consists of three parts:
+a position, a direction and a string mode value.
+The position consists a pair of \code{Int}s, an $x$ and a $y$ coordinate. These coordinates
+let the program counter know where it is within the program space using the function
+\code{getPosition} (\code{BProgramCounter -> Position}) and they are updated as the program
+counter moves using the function \code{step} (\code{BProgramCounter -> BProgramCounter}).
+The direction lets the program counter know which direction its moving in, \code{North}
+corresponds to up, \code{East} to the right etc. This value can be changed with the function
+\code{setDirection} (\code{BProgramCounter -> Direction}), a function used by instructions such
+as \code{>}, \code{v} and \code{?}.
+The string mode value is a \code{Bool} that keeps track of whether or not characters are
+read as instructions or as ascii values. This value is inverted using the \code{setStringMode}
+(\code{BProgramCounter -> StringMode -> BProgramCounter}) function when the \code{"}-instruction
+is read.
 
 \subsubsection{Stack}
 \label{sec:structstack}
