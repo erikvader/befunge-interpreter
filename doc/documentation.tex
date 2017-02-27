@@ -98,7 +98,15 @@ The interpreter has no graphical user interface and is run for the command line.
 \subsection{Dependencies}
 \label{sec:dependencies}
 
-The only non-standard library that the interpreter depends on is \code{System.Random}.
+The interpreter requires a few packages that doesn't come with the base package from a fresh install of \code{GHC}:
+
+\begin{itemize}
+\item The module \code{System.Random} from the package \code{random-1.1} or newer.
+\item The module \code{Data.Array.IO} from the package \code{array-0.5.1.1} or newer.
+\item The module \code{Data.Hashmap.Strict} from the package \code{unordered-containers-0.2.7.2} or newer.
+\item The module \code{Data.Hashable} from the package \code{hashable-1.2.5.0} or newer.
+\item The module \code{Test.HUnit} from the package \code{HUnit-1.5.0.0} or newer.
+\end{itemize}
 
 \subsection{Running}
 \label{sec:run}
