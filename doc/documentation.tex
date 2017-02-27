@@ -38,18 +38,18 @@ We introduce the programming language Befunge-93 as well as its stack, program s
 \subsection{What is Befunge-93?}
 \label{sec:whatis}
 
-Befunge-93 (sometimes in this document simply “Befunge”) is a two-dimensional esoteric programming language developed by Chris Pressey in 1993 \cite{esolangs}. The program to be executed is stored in a 80 by 25 grid, the “program space”, where each cell can hold 1 byte of data. There are no variables available but data can be stored in either a LIFO-stack (last-in-first-out) or, by using the \code{p} instruction, in the program space itself. This allows for the program to modify itself while running. See \ref{sec:pandg} “\nameref{sec:pandg}”.
+Befunge-93 (sometimes in this document simply “Befunge”) is a two-dimensional esoteric programming language developed by Chris Pressey in 1993 \cite{esolangs}. The program to be executed is stored in a 80 by 25 grid, the “program space”, where each cell can hold 1 byte of data. There are no variables available but data can be stored in either a LIFO-stack (last-in-first-out) or, by using the \code{p} instruction, in the program space itself. This allows for the program to modify itself while running. See section \ref{sec:pandg} “\nameref{sec:pandg}”.
 
 Befunge-93 was the first iteration of several Befunge-specifications which eventually lead to Funge-98, a generalization of in which program spaces can be either one-, two-, or three-dimensional. Funge-98 also provides a paradigm for program spaces in an arbitrary number of dimensions \cite{funge98}. Besides new dimensions, Funge-98 also specifies several new instructions as well as concurrent program flow and a stack of stacks.
 
-\subsubsection{The stack}
+\subsection{The stack}
 \label{sec:stack}
 
 The stack has the property that it is never truly empty. Instead, if an attempt to pop a value of the stack is made when the stack is thought to be empty, a value of \code{0} is returned. The stack is in all but this one regard a regular LIFO-stack.
 
 When referring to the stack this document will sometimes use the notation $\langle a_n, \cdots, a_1 \rangle$ where $a_1$ is the top-most value of the stack.
 
-\subsubsection{The program space}
+\subsection{The program space}
 \label{sec:space}
 
 The program space consists of 2,000 cells arranged in a 80 by 25 grid. The upper left corner of this grid is given the coordinate position $(0, 0)$ and the lower right corner is identified as $(79, 24)$, see Figure \ref{fig:grid}.
@@ -75,7 +75,7 @@ The grid can topologically be thought of as a torus (the surface of a doughnut);
 
 In this document we will use “program space”, “space”, “program memory” and “memory” synonymously.
 
-\subsubsection{Program flow and the Program Counter}
+\subsection{Program flow and the Program Counter}
 \label{sec:pc}
 
 Program flow is determined by the position (in the program space) and direction of a unique Program Counter, often simply called the “PC”. The position is usually represented as a pair $(x, y)$ of coordinates and the direction is always one of either East, South, West or North. Traveling East increases the $x$-component of the PC's position, and traveling West decreases it. Traveling South or North works analogously.
@@ -88,7 +88,7 @@ The PC starts at position (0, 0) -- the upper-left corner of the program space -
 \item Step the PC one step in its direction.
 
 \end{enumerate}
-These three steps are repeated until an \code{@}-character is read at which point the program immediately terminates. See section \ref{sec:flow} for more information on program flow of the interpreter.
+These three steps are repeated until an \code{@}-character is read at which point the program immediately terminates. See section \ref{sec:interpreterflow} for more information on program flow of the interpreter.
 
 \section{Running the interpreter}
 \label{sec:howtorun}
@@ -137,7 +137,7 @@ Befunge-93 specifies a total of 35 actions each represented by an ASCII characte
 Table \ref{tab:instr} contains a complete list of all characters that the interpreter recognizes. If the PC encounters an unrecognized character, it ignores it completely -- as if it were a space (\textvisiblespace).
 
 
-\begin{table}[!ht]
+\begin{table}[!hb]
 \centering
 \begin{tabular}{r|l}
 Character & Action\\
@@ -310,7 +310,7 @@ The Befunge program space, the “memory”, is constructed using an array. \cod
 
 \vspace{6pt}
 \noindent
-\code{buildArray} (\code{BMemory -> [String] -> IO ()}) allocates an array and populates it with the characters in a list of strings. Any characters outside the bounds (defaults to 80$\times$25) are ignored.
+\code{buildArray} (\code{BMemory -> [String] -> IO ()}) allocates an array and populates it with the characters in a list of strings. Any characters outside the bounds (defaults to $80 \times 25$) are ignored.
 
 \vspace{6pt}
 \noindent
@@ -329,25 +329,12 @@ Both \code{getValue} and \code{putValue} wraps array indices using modulus.
 
 empty
 
-\subsection{Major functions}
-\label{sec:functions}
+\subsection{Program flow of the interpreter}
+\label{sec:interpreterflow}
 
-empty (remember specifications!)
+The interpreter begins in function \code{main} to get the arguments and validates using \code{parseFlags} from the \code{Flags} module. If the arguments are valid, the interpreter proceeds to read the program file in function \code{readProgram}. We initialize interpretation in function \code{initialize} which takes the Befunge program (as text) and stores in an array. It then returns the array together with a default Program Counter (at position (0, 0) and facing East) and empty stack.
 
-\subsubsection{Program flow of the interpreter}
-\label{sec:flow}
-
-The interpreter begins by validating the arguments and if that succeeds proceeds to read the input file. The contents of the file is put into an array and execution begins at position (0,0) with the PC having an initial direction of East and an empty stack.
-
-The main interpreter loop extracts the character at the PC's position from the array and terminates if it is an \code{@}-character and string mode (see \ref{sec:stringmode}) is disabled. Otherwise, one of two things happen:
-
-\begin{itemize}
-\item If string mode is enabled then the ASCII value of the given character is pushed onto the stack.
-
-\item If string mode is disabled, a subfunction specific to that Befunge instruction is called which updates the PC, stack and program space (the array) as accordingly.
-\end{itemize}
-
-Finally, the loop starts again with the updated PC, stack and array.
+The main interpreter loop, which takes place in \code{runProgram}, begins by reading the character at the PC's position from the program space. If string mode is disabled and the character is an \code{@} then the interpreter stops immediately. Otherwise, \code{executeInstruction} is called which, depending on whether string mode is enabled or disabled as well as the character read, calls functions imported from the module \code{BInstructions} where all Befunge instructions are implemented. Finally, the \code{runProgram} calls itself with an updated PC, stack and array.
 
 \section{Shortcomings and caveats}
 
